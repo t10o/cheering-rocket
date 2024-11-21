@@ -26,3 +26,21 @@ corepack enable pnpm
 ```bash
 pnmm i
 ```
+
+### Install lonic CLI
+
+```bash
+npm install -g @ionic/cli native-run
+```
+
+### Start Android
+
+```bash
+npx cap open android
+```
+
+### Start iOS
+
+```bash
+npx cap open ios
+```

@@ -5,14 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:ios": "npx cap run ios",
+    "dev:android": "npx cap run android",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0"
+  },
   "devDependencies": {
-    "@rocket/eslint-config": "workspace:*"
+    "@capacitor/cli": "^6.2.0",
+    "@rocket/eslint-config": "workspace:*",
+    "@rocket/tailwind-config": "workspace:*"
   },
   "volta": {
     "node": "22.11.0"

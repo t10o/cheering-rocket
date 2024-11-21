@@ -12,7 +12,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@rocket/eslint-config": "workspace:*"
+    "@rocket/eslint-config": "workspace:*",
+    "@rocket/tailwind-config": "workspace:*"
   },
   "volta": {
     "node": "22.11.0"

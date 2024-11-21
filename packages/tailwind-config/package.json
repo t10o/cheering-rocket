@@ -1,0 +1,10 @@
+{
+  "name": "@rocket/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "tailwind.config.js",
+    "postcss.config.js"
+  ]
+}
