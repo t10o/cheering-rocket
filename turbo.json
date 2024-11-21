@@ -21,10 +21,12 @@
       "persistent": true
     },
     "dev:ios": {
-      "dependsOn": ["^dev:ios"]
+      "dependsOn": ["^dev:ios"],
+      "cache": false
     },
     "dev:android": {
-      "dependsOn": ["^dev:android"]
+      "dependsOn": ["^dev:android"],
+      "cache": false
     }
   }
 }

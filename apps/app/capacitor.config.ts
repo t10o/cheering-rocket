@@ -10,19 +10,29 @@ function getLocalIPAddress() {
       }
     }
   }
-  return "127.0.0.1"; // Fallback to localhost
+  return "127.0.0.1";
 }
 
-const localIP = getLocalIPAddress();
+let config: CapacitorConfig;
 
-const config: CapacitorConfig = {
+const baseConfig: CapacitorConfig = {
   appId: "jp.cheeringrocket",
   appName: "cheering-rocket",
   webDir: "dist",
-  server: {
-    url: `http://${localIP}:8000`,
-    cleartext: true,
-  },
 };
+
+if (process.env.NODE_ENV === "development") {
+  const localIP = getLocalIPAddress();
+
+  config = {
+    ...baseConfig,
+    server: {
+      url: `http://${localIP}:8000`,
+      cleartext: true,
+    },
+  };
+} else {
+  config = { ...baseConfig };
+}
 
 export default config;
