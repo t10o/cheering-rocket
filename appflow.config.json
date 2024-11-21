@@ -2,7 +2,7 @@
   "apps":
   [
     {
-      "appId": "jp.cheeringrocket",
+      "appId": "1e7f78af",
       "root": "apps/app",
       "dependencyInstallCommand": "npm i -g pnpm && pnpm i",
       "webBuildCommand": "pnpm build"
