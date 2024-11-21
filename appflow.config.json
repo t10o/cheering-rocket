@@ -4,7 +4,7 @@
     {
       "appId": "1e7f78af",
       "root": "apps/app",
-      "dependencyInstallCommand": "npm i -g pnpm && pnpm i",
+      "dependencyInstallCommand": "pnpm i",
       "webBuildCommand": "pnpm build"
     }
   ]
