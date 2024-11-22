@@ -124,6 +124,15 @@ importers:
 
   packages/tailwind-config: {}
 
+  packages/ui:
+    devDependencies:
+      '@rocket/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@rocket/tailwind-config':
+        specifier: workspace:*
+        version: link:../tailwind-config
+
 packages:
 
   '@alloc/quick-lru@5.2.0':

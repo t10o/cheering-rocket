@@ -1,0 +1,10 @@
+{
+  "name": "@rocket/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@rocket/eslint-config": "workspace:*",
+    "@rocket/tailwind-config": "workspace:*"
+  }
+}
