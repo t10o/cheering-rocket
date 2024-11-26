@@ -27,6 +27,8 @@
     "dev:android": {
       "dependsOn": ["^dev:android"],
       "cache": false
-    }
+    },
+    "test": {},
+    "type-check": {}
   }
 }

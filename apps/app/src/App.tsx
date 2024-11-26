@@ -1,5 +1,7 @@
-import "./App.css";
+import "@rocket/ui/styles.css";
 
+import { Button } from "@rocket/ui/Button";
+import clsx from "clsx";
 import { useState } from "react";
 
 import viteLogo from "/vite.svg";
@@ -32,7 +34,9 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       <p>test test test test test test</p>
-      <p>{process.env.NODE_ENV}</p>
+      <p className={clsx("text-2xl")}>{process.env.NODE_ENV}</p>
+
+      <Button label="hoge" />
     </>
   );
 }

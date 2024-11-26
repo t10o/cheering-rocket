@@ -3,8 +3,31 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
+    "lint": "eslint src/",
+    "dev": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+    "type-check": "tsc --noEmit"
+  },
   "devDependencies": {
     "@rocket/eslint-config": "workspace:*",
     "@rocket/tailwind-config": "workspace:*"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./styles.css": "./dist/index.css",
+    "./Button": "./src/Button/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
   }
 }

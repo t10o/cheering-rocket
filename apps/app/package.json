@@ -10,12 +10,14 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
     "@capacitor/core": "^6.2.0",
-    "@capacitor/ios": "^6.2.0"
+    "@capacitor/ios": "^6.2.0",
+    "@rocket/ui": "workspace:*"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.2.0",

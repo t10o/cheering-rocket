@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { clsx } from "clsx";
 import { useState } from "react";
 
