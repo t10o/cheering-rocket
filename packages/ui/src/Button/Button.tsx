@@ -115,6 +115,8 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
           backgroundColor[variant][color],
           textColor[variant][color],
           borderColor[variant][color],
+          variant === "outlined" ? "border-2" : "",
+          color !== "text" && variant !== "text" && "font-bold",
           props.disabled && ["opacity-50", "cursor-not-allowed"],
         )}
         {...props}
