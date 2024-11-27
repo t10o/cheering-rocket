@@ -12,49 +12,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. リポジトリをチェックアウト
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Volta をインストールして Node.js と pnpm をセットアップ
-      - name: Setup Volta
+      - name: Install Volta and Setup Node.js
         run: |
           curl https://get.volta.sh | bash
-          echo "::add-path::/home/runner/.volta/bin"
-          volta install node@22.11.0
+          echo "PATH=/home/runner/.volta/bin:\$PATH" >> $GITHUB_ENV
+          source $GITHUB_ENV
           volta install corepack
           corepack enable
           corepack enable pnpm
 
-      # 3. 依存関係のインストール
       - name: Install dependencies
         run: pnpm install
 
-      # 4. Web 部分のビルド（モノレポルート）
       - name: Build Web and Dependencies
         run: pnpm build
 
-      # 5. OpenJDK 17 をセットアップ
-      - name: Setup JDK (OpenJDK 17)
+      - name: Setup JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 6. Android SDK をセットアップ
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
         with:
           api-level: 34
           build-tools: 34.0.0
 
-      # 7. デバッグ APK のビルド
       - name: Build Debug APK
         run: |
           cd apps/app/android
           ./gradlew assembleDebug
 
-      # 8. Firebase App Distribution にアップロード
       - name: Distribute to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
