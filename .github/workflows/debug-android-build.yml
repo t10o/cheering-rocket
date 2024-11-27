@@ -1,0 +1,65 @@
+name: Debug Android Build and Distribute
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  debug-build:
+    name: Debug Build and Distribute
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. リポジトリをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Volta をインストールして Node.js と pnpm をセットアップ
+      - name: Setup Volta
+        run: |
+          curl https://get.volta.sh | bash
+          echo "::add-path::/home/runner/.volta/bin"
+          volta install node@22.11.0
+          volta install corepack
+          corepack enable
+          corepack enable pnpm
+
+      # 3. 依存関係のインストール
+      - name: Install dependencies
+        run: pnpm install
+
+      # 4. Web 部分のビルド（モノレポルート）
+      - name: Build Web and Dependencies
+        run: pnpm build
+
+      # 5. OpenJDK 17 をセットアップ
+      - name: Setup JDK (OpenJDK 17)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 6. Android SDK をセットアップ
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+
+      # 7. デバッグ APK のビルド
+      - name: Build Debug APK
+        run: |
+          cd apps/app/android
+          ./gradlew assembleDebug
+
+      # 8. Firebase App Distribution にアップロード
+      - name: Distribute to Firebase App Distribution
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          firebase appdistribution:distribute \
+            apps/app/android/app/build/outputs/apk/debug/app-debug.apk \
+            --app 1:912731691279:android:0849183bb9ee23c66d867a \
+            --groups developer
