@@ -4,10 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "postinstall": "npx cap sync",
     "dev": "vite",
-    "dev:ios": "pnpm build && chmod +x shells/run-ios.sh && ./shells/run-ios.sh",
-    "dev:android": "pnpm build && NODE_ENV=development npx cap run android",
+    "dev:ios": "pnpm build && npx cap sync && chmod +x shells/run-ios.sh && ./shells/run-ios.sh",
+    "dev:android": "pnpm build && npx cap sync && NODE_ENV=development npx cap run android",
     "dev:app": "pnpm dev:ios && pnpm dev:android",
     "build": "chmod +x shells/update-version-from-package.sh && ./shells/update-version-from-package.sh && tsc -b && vite build && npx cap sync",
     "lint": "eslint .",
