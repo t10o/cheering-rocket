@@ -38,3 +38,19 @@ npx cap open android
 ```bash
 npx cap open ios
 ```
+
+## Dev
+
+### Launch Dev Server
+Launch Web, App, Storybook, UI build
+
+```bash
+pnpm dev
+```
+
+### Launch Simulator
+You need to launch the dev server before executing this command. Additionally, both the iOS and Android simulators must be running.
+
+```bash
+pnpm dev:app
+```
