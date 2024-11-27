@@ -13,7 +13,7 @@
 
 html {
   font-size: 16px;
-  color: #333;
+  color: #404040;
   word-spacing: 1px;
   letter-spacing: 0.1rem;
   line-height: 1.9;
@@ -24,5 +24,6 @@ html {
 }
 
 body {
+  padding-top: var(--safe-area-inset-top);
   margin: 0;
 }

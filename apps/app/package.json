@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "npx cap sync",
     "dev": "vite",
     "dev:ios": "pnpm build && chmod +x shells/run-ios.sh && ./shells/run-ios.sh",
     "dev:android": "pnpm build && NODE_ENV=development npx cap run android",
@@ -15,6 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor-community/safe-area": "6.0.0-alpha.8",
     "@capacitor/android": "^6.2.0",
     "@capacitor/core": "^6.2.0",
     "@capacitor/ios": "^6.2.0",

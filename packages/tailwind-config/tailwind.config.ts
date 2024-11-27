@@ -1,4 +1,4 @@
-import { Config } from  "tailwindcss"
+import { Config } from "tailwindcss";
 
 const config: Omit<Config, "content"> = {
   theme: {

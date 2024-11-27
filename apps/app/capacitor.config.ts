@@ -1,3 +1,5 @@
+/// <reference types="@capacitor-community/safe-area" />
+
 import type { CapacitorConfig } from "@capacitor/cli";
 import { networkInterfaces } from "os";
 

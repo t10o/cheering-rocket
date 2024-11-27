@@ -11,7 +11,7 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.2.0_@capacitor+core@6.2.0/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.2.0_@capacitor+core@6.2.0/node_modules/@capacitor/ios'
-
+  pod 'CapacitorCommunitySafeArea', :path => '../../../../node_modules/.pnpm/@capacitor-community+safe-area@6.0.0-alpha.8_@capacitor+core@6.2.0/node_modules/@capacitor-community/safe-area'
 end
 
 target 'App' do
