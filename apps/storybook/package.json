@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "storybook build",
-    "test:storybook": "test-storybook"
+    "build": "storybook build"
   },
   "dependencies": {
     "@rocket/ui": "workspace:*"
