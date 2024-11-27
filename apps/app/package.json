@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:ios": "NODE_ENV=development npx cap run ios",
-    "dev:android": "NODE_ENV=development npx cap run android",
+    "dev:ios": "pnpm build && chmod +x shells/run-ios.sh && ./shells/run-ios.sh",
+    "dev:android": "pnpm build && NODE_ENV=development npx cap run android",
+    "dev:app": "pnpm dev:ios && pnpm dev:android",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

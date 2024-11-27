@@ -33,10 +33,10 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <p>test test test test test test</p>
+      <p>test test test test test test hoge fuga piyo</p>
       <p className={clsx("text-2xl")}>{process.env.NODE_ENV}</p>
 
-      <Button label="hoge" />
+      <Button label="ふがhu" />
     </>
   );
 }

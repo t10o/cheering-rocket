@@ -25,6 +25,10 @@
       "dependsOn": ["^dev:android"],
       "cache": false
     },
+    "dev:app": {
+      "dependsOn": ["^dev:app"],
+      "cache": false
+    },
     "test": {},
     "type-check": {}
   }

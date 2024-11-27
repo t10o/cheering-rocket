@@ -3,10 +3,10 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "build-storybook": "turbo build:storybook",
     "dev": "turbo dev",
     "dev:ios": "turbo dev:ios",
     "dev:android": "turbo dev:android",
+    "dev:app": "turbo dev:app",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
