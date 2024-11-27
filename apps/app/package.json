@@ -1,7 +1,7 @@
 {
   "name": "app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "postinstall": "npx cap sync",
@@ -9,7 +9,7 @@
     "dev:ios": "pnpm build && chmod +x shells/run-ios.sh && ./shells/run-ios.sh",
     "dev:android": "pnpm build && NODE_ENV=development npx cap run android",
     "dev:app": "pnpm dev:ios && pnpm dev:android",
-    "build": "tsc -b && vite build",
+    "build": "chmod +x shells/update-version-from-package.sh && ./shells/update-version-from-package.sh && tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">cheering-rocket</string>
+    <string name="app_name">応援ロケと￥っと</string>
     <string name="title_activity_main">cheering-rocket</string>
     <string name="package_name">jp.cheeringrocket</string>
     <string name="custom_url_scheme">jp.cheeringrocket</string>
