@@ -15,18 +15,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Volta and Setup Node.js
-        run: |
-          curl https://get.volta.sh | bash
-          echo "PATH=/home/runner/.volta/bin:\$PATH" >> $GITHUB_ENV
-          source $GITHUB_ENV
-          volta install node
-          volta install corepack
-          corepack enable
-          corepack enable pnpm
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.11.0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.14.2
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm i
 
       - name: Build Web and Dependencies
         run: pnpm build
