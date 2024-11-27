@@ -4,8 +4,8 @@
     {
       "appId": "1e7f78af",
       "root": "apps/app",
-      "dependencyInstallCommand": "pnpm i",
-      "webBuildCommand": "pnpm build"
+      "dependencyInstallCommand": "cd ../../ && pnpm i",
+      "webBuildCommand": "cd ../../ && pnpm build"
     }
   ]
 }
