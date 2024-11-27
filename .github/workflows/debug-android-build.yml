@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - apps/app/package.json
   workflow_dispatch:
 
 jobs:
@@ -14,6 +16,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Check for version change
+        id: version_check
+        run: |
+          OLD_VERSION=$(git show HEAD~1:apps/app/package.json | jq -r .version)
+          NEW_VERSION=$(jq -r .version < apps/app/package.json)
+          echo "Old Version: $OLD_VERSION"
+          echo "New Version: $NEW_VERSION"
+          if [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
+            echo "No version change detected"
+            exit 1
+          fi
+        shell: bash
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -26,7 +41,7 @@ jobs:
           version: 9.14.2
 
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm install
 
       - name: Build Web and Dependencies
         run: pnpm build
@@ -59,3 +74,9 @@ jobs:
             apps/app/android/app/build/outputs/apk/debug/app-debug.apk \
             --app 1:912731691279:android:0849183bb9ee23c66d867a \
             --groups developer
+
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
