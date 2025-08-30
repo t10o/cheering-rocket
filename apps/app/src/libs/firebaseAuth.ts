@@ -1,8 +1,12 @@
 import { Capacitor } from "@capacitor/core";
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 import {
+  type Auth,
+  browserPopupRedirectResolver,
   getAuth,
   GoogleAuthProvider,
+  indexedDBLocalPersistence,
+  initializeAuth,
   OAuthProvider,
   signInWithCredential,
   signOut as fbSignOut,
@@ -11,6 +15,22 @@ import {
 import { firebaseApp, initWebAuth } from "@/libs/firebase";
 
 const auth = getAuth(firebaseApp) ?? initWebAuth();
+
+let _auth: Auth | null = null;
+export function getAuthInstance(): Auth {
+  if (_auth) return _auth;
+
+  try {
+    _auth = initializeAuth(firebaseApp, {
+      persistence: indexedDBLocalPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver,
+    });
+  } catch {
+    _auth = auth;
+  }
+
+  return _auth;
+}
 
 const ensureWebSessionFromGoogle = async (idToken?: string | null) => {
   if (!idToken) return;

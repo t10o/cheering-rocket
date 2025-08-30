@@ -1,5 +1,13 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  Link,
+  Navigate,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -14,29 +22,25 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const { user, loading } = useAuth();
+  const { location } = useRouterState();
+
+  const publicPaths = ["/auth/signin"];
+
+  if (loading) return <div className="p-4">Loading...</div>;
+
+  if (!user && !publicPaths.includes(location.pathname)) {
+    return <Navigate to="/auth/signin" search={{ redirect: location.href }} />;
+  }
+
+  if (user && location.pathname === "/login") {
+    return <Navigate to="/" />;
+  }
+
   return (
     <>
-      <div className="flex gap-2 border-b p-2 text-lg">
-        <Link
-          to="/"
-          activeProps={{
-            className: "font-bold",
-          }}
-          activeOptions={{ exact: true }}
-        >
-          Home
-        </Link>{" "}
-        <Link
-          to="/auth/signin"
-          activeProps={{
-            className: "font-bold",
-          }}
-        >
-          SignIn
-        </Link>{" "}
-      </div>
-      <hr />
       <Outlet />
+
       {/* Start rendering router matches */}
       <TanStackRouterDevtools position="bottom-right" />
     </>

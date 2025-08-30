@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import clsx from "clsx";
 
 import { GoogleButton } from "@cheering/ui";
 
@@ -9,9 +10,27 @@ export const Route = createFileRoute("/auth/signin/")({
 });
 
 function SignIn() {
+  const router = useRouter();
+
+  const handleSignInWithGoogle = async () => {
+    await signInWithGoogle();
+    router.navigate({ to: "/" });
+  };
+
   return (
-    <div className="flex flex-col gap-3">
-      <GoogleButton onPress={() => signInWithGoogle()} />
+    <div
+      className={clsx(
+        "flex",
+        "flex-col",
+        "gap-3",
+        "max-w-sm",
+        "mx-auto",
+        "mt-10",
+        "justify-center",
+      )}
+    >
+      <h1 className={clsx("text-2xl", "font-bold")}>サインイン</h1>
+      <GoogleButton onPress={handleSignInWithGoogle} />
     </div>
   );
 }
