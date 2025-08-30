@@ -3,8 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@cheering/ui/*": ["../../packages/ui/src/*"],
-      "@cheering/core/*": ["../../packages/core/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "vite.config.ts"]

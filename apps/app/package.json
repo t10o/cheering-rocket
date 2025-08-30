@@ -16,10 +16,14 @@
   "dependencies": {
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
+    "@tanstack/react-router": "^1.131.28",
+    "@tanstack/react-router-devtools": "^1.131.28",
+    "firebase": "^12.2.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
+    "@capacitor-firebase/authentication": "^7.3.1",
     "@capacitor/android": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
     "@cheering/eslint-config": "workspace:*",
@@ -28,6 +32,7 @@
     "@cheering/ui": "workspace:*",
     "@eslint/js": "^9.33.0",
     "@tailwindcss/vite": "^4.1.12",
+    "@tanstack/router-plugin": "^1.131.28",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.0",

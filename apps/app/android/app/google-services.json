@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "427159045748",
+    "project_id": "cheering-rocket-b3608",
+    "storage_bucket": "cheering-rocket-b3608.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427159045748:android:1cb59723a0168e3530f321",
+        "android_client_info": {
+          "package_name": "com.cheering.rocket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427159045748-hhbh24nvk8apgsa90rsqcrcf8jq7q0kp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cheering.rocket",
+            "certificate_hash": "0d80b2c08409736ec0050a7af643ff9a1ec4c088"
+          }
+        },
+        {
+          "client_id": "427159045748-1bc0mamobklkj3ohf3sgob4t7nu6rnre.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZoqUWofifYsi-fGC-TTjbxt6q-HtoGcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427159045748-1bc0mamobklkj3ohf3sgob4t7nu6rnre.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "427159045748-jtenbs4tfqc8a374j497k1e69ga37o5j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cheering.rocket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
