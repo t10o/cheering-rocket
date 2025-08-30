@@ -14,10 +14,12 @@
   "devDependencies": {
     "@cheering/eslint-config": "workspace:*",
     "@cheering/typescript-config": "workspace:*",
+    "@cheering/tailwind-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
     "eslint": "^9.34.0",
+    "tailwindcss": "^4.1.12",
     "typescript": "5.9.2"
   },
   "dependencies": {

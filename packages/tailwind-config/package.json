@@ -1,0 +1,15 @@
+{
+  "name": "@cheering/tailwind-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.css"
+  },
+  "dependencies": {
+    "@digital-go-jp/tailwind-theme-plugin": "^0.3.2"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.12"
+  }
+}
