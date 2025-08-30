@@ -11,7 +11,8 @@
     "dev": "tailwindcss -i ./src/index.css -o ./dist/index.css --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "generate:component": "turbo gen react-component",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {

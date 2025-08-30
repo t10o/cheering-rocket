@@ -1,0 +1,17 @@
+# 生成物/依存
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# モバイル関連
+apps/runner/android/
+apps/runner/ios/
+apps/runner/.android/
+apps/runner/.ios/
+
+# その他ビルド出力
+apps/**/out/
+apps/**/.next/
+packages/**/dist/

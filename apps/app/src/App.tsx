@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 import { Button } from "@cheering/ui";
 
-import reactLogo from './assets/react.svg'
+import reactLogo from "./assets/react.svg";
 
-import './App.css'
+import "./App.css";
 
-import viteLogo from '/vite.svg'
+import viteLogo from "/vite.svg";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -38,7 +38,7 @@ function App() {
 
       <Button>test</Button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
