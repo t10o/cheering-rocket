@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Button } from "@cheering/ui";
+
 import reactLogo from "./assets/react.svg";
 
 import "./App.css";
@@ -33,6 +35,8 @@ function App() {
       </p>
 
       <div className="text-blue-600">tailwind test</div>
+
+      <Button>test</Button>
     </>
   );
 }

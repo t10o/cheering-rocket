@@ -1,3 +1,2 @@
 @import "@cheering/tailwind-config";
-
-@source "../../packages/ui/src";
+@import "@cheering/ui/styles";

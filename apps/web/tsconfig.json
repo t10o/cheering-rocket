@@ -1,5 +1,5 @@
 {
-  "extends": "@cheering/typescript-config/react",
+  "extends": "@cheering/typescript-config/vite",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
