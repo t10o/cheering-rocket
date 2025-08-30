@@ -33,7 +33,7 @@ function RootComponent() {
     return <Navigate to="/auth/signin" search={{ redirect: location.href }} />;
   }
 
-  if (user && location.pathname === "/login") {
+  if (user && location.pathname === "/auth/signin") {
     return <Navigate to="/" />;
   }
 
