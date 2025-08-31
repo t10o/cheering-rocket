@@ -9,9 +9,11 @@ import {
   initializeAuth,
   OAuthProvider,
   signInWithCredential,
+  signInWithPopup,
   signOut as fbSignOut,
 } from "firebase/auth";
 
+import { ensureUserDocument } from "@/features/user/userDoc";
 import { firebaseApp, initWebAuth } from "@/libs/firebase";
 
 const auth = getAuth(firebaseApp) ?? initWebAuth();
@@ -32,14 +34,6 @@ export function getAuthInstance(): Auth {
   return _auth;
 }
 
-const ensureWebSessionFromGoogle = async (idToken?: string | null) => {
-  if (!idToken) return;
-
-  const cred = GoogleAuthProvider.credential(idToken);
-
-  await signInWithCredential(auth, cred);
-};
-
 const ensureWebSessionFromApple = async (
   idToken?: string | null,
   rawNonce?: string | null,
@@ -55,15 +49,31 @@ const ensureWebSessionFromApple = async (
   await signInWithCredential(auth, cred);
 };
 
-export const signInWithGoogle = async () => {
-  const { user, credential } = await FirebaseAuthentication.signInWithGoogle();
+export async function signInWithGoogle() {
+  const auth = getAuth();
 
-  if (Capacitor.getPlatform() !== "web") {
-    await ensureWebSessionFromGoogle(credential?.idToken ?? null);
+  // Web（ブラウザ）ではそのままポップアップ
+  if (!Capacitor.isNativePlatform()) {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    return;
   }
 
-  return user;
-};
+  // ネイティブ（Android/iOS）
+  // - skipNativeAuth: ネイティブ側での直接ログインをスキップ → credential を Web で使う
+  // - useCredentialManager: エミュや未ログイン端末では false 推奨（"No credential available" 回避）
+  const { credential } = await FirebaseAuthentication.signInWithGoogle({
+    skipNativeAuth: true,
+    useCredentialManager: false, // ← エミュ/実機で資格情報が無い問題の回避
+  });
+
+  if (!credential?.idToken)
+    throw new Error("No credential (idToken) from native sign-in");
+
+  const googleCred = GoogleAuthProvider.credential(credential.idToken);
+  await signInWithCredential(auth, googleCred);
+
+  await ensureUserDocument();
+}
 
 export const signInWithApple = async () => {
   const { user, credential } = await FirebaseAuthentication.signInWithApple();

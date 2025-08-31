@@ -8,7 +8,12 @@
     "lint:fix": "turbo run lint:fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "cap:sync": "pnpm -C apps/app exec cap sync"
+    "cap:sync": "pnpm -C apps/app exec cap sync",
+    "cap:run:android": "pnpm -C apps/app exec cap run android",
+    "cap:copy": "pnpm -C apps/app exec cap copy",
+    "fb:emulators": "pnpm -C apps/firebase -r run build && pnpm -C apps/firebase exec firebase emulators:start",
+    "fb:deploy:rules": "pnpm -C apps/firebase exec firebase deploy --only firestore:rules,storage",
+    "fb:deploy": "pnpm -C apps/firebase/functions run deploy"
   },
   "devDependencies": {
     "eslint": "^9.34.0",

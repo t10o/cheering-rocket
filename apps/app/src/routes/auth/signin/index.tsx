@@ -13,7 +13,11 @@ function SignIn() {
   const router = useRouter();
 
   const handleSignInWithGoogle = async () => {
-    await signInWithGoogle();
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      alert(error);
+    }
     router.navigate({ to: "/" });
   };
 

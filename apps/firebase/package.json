@@ -1,0 +1,14 @@
+{
+  "name": "@cheering/firebase",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:rules": "firebase deploy --only firestore:rules,storage:rules",
+    "login": "firebase login",
+    "emulators": "firebase emulators:start"
+  },
+  "devDependencies": {
+    "firebase-tools": "^14.15.1"
+  }
+}

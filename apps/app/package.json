@@ -14,6 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor-community/safe-area": "7.0.0-alpha.1",
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
     "@tanstack/react-router": "^1.131.28",

@@ -1,2 +1,6 @@
 @import "@cheering/tailwind-config";
 @import "@cheering/ui/styles";
+
+body {
+  padding-top: var(--safe-area-inset-top);
+}

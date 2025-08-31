@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
+import { AppBar } from "@cheering/ui";
+
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createRootRoute({
@@ -39,6 +41,8 @@ function RootComponent() {
 
   return (
     <>
+      <AppBar bordered center={<div>Cheering Rocket</div>} />
+
       <Outlet />
 
       {/* Start rendering router matches */}
