@@ -1,8 +1,12 @@
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   createRootRoute,
   Link,
   Navigate,
   Outlet,
+  useCanGoBack,
+  useRouter,
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -26,8 +30,11 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { user, loading } = useAuth();
   const { location } = useRouterState();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
 
   const publicPaths = ["/auth/signin"];
+  const notGoBackPaths = ["/auth/signin", "/"];
 
   if (loading) return <div className="p-4">Loading...</div>;
 
@@ -39,9 +46,23 @@ function RootComponent() {
     return <Navigate to="/" />;
   }
 
+  const handleBackClick = () => {
+    if (canGoBack) {
+      router.history.back();
+    }
+  };
+
   return (
     <>
-      <AppBar bordered center={<div>Cheering Rocket</div>} />
+      <AppBar
+        bordered
+        left={
+          notGoBackPaths.includes(location.pathname) ? undefined : (
+            <FontAwesomeIcon icon={faArrowLeft} onClick={handleBackClick} />
+          )
+        }
+        center={<div>Cheering Rocket</div>}
+      />
 
       <Outlet />
 
