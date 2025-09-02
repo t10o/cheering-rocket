@@ -1,16 +1,46 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{db}/documents {
+    function authed() { return request.auth != null; }
 
-    // 自分のユーザー文書のみ R/W 可
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    // 自分がイベントメンバーか
+    function isEventMember(eventId) {
+      return authed() &&
+        exists(/databases/$(db)/documents/events/$(eventId)/members/$(request.auth.uid));
     }
 
-    // 例：公開読み取りが必要なコレクションがあれば個別に許可
-    // match /public/{doc} {
-    //   allow read: if true;
-    //   allow write: if request.auth != null && request.auth.token.admin == true;
-    // }
+    // === 一覧画面のための collectionGroup("members") ===
+    // 自分の members ドキュメントだけ read/list 可（安全側）
+    match /{path=**}/members/{mid} {
+      allow read: if authed() && (mid == request.auth.uid || resource.data.uid == request.auth.uid);
+      allow create, update, delete:
+        if authed() && (mid == request.auth.uid || request.resource.data.uid == request.auth.uid);
+    }
+
+    // === イベント本体・配下 ===
+    match /events/{eventId} {
+      // 🔻 ここを分割：get は joinable OR メンバー、list はメンバーのみ
+      allow get: if isEventMember(eventId) || (resource.data.joinable == true);
+      allow list: if isEventMember(eventId);
+
+      allow create: if authed();
+      allow update, delete: if authed() && resource.data.ownerUid == request.auth.uid;
+
+      // イベント配下 members は、イベントのメンバーなら一覧含め read 可
+      match /members/{uid} {
+        allow read: if isEventMember(eventId);
+        // 参加操作（自分の doc を作る）は本人のみでOK
+        allow create: if authed() && uid == request.auth.uid;
+        allow update, delete: if authed() && uid == request.auth.uid;
+      }
+    }
+
+    // === ユーザープロフィール ===
+    match /users/{uid} {
+      // サインイン済みなら誰でも read（メンバー名表示のため）
+      allow read: if authed();
+      // 書き込みは本人のみ
+      allow create, update, delete: if authed() && request.auth.uid == uid;
+    }
   }
 }

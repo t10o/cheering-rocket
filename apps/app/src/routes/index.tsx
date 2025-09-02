@@ -27,7 +27,7 @@ function IndexPage() {
     icon: IconDefinition;
   }> = [
     { to: "/profile", label: "プロフィール", icon: faUser },
-    { to: "/groups", label: "グループ管理", icon: faUsers },
+    { to: "/events", label: "グループ管理", icon: faUsers },
     { to: "/runs", label: "ラン管理", icon: faPersonRunning },
   ];
 
