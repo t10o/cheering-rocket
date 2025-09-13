@@ -1,11 +1,22 @@
 import {
+  faHome,
+  faPersonRunning,
+  faUser,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
   createRootRoute,
   Link,
   Navigate,
   Outlet,
+  useLocation,
+  useRouter,
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+
+import { TabBar } from "@cheering/ui";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -24,6 +35,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { user, loading } = useAuth();
   const { location } = useRouterState();
+  const router = useRouter();
 
   const publicPaths = ["/auth/signin"];
 
@@ -37,9 +49,50 @@ function RootComponent() {
     return <Navigate to="/" />;
   }
 
+  // タブバーのアイテム定義
+  const tabItems = [
+    {
+      to: "/",
+      label: "ホーム",
+      icon: <FontAwesomeIcon icon={faHome} />,
+      exact: true,
+      isActive: location.pathname === "/",
+      onClick: () => router.navigate({ to: "/" }),
+    },
+    {
+      to: "/events",
+      label: "イベント",
+      icon: <FontAwesomeIcon icon={faUsers} />,
+      exact: false,
+      isActive: location.pathname.startsWith("/events"),
+      onClick: () => router.navigate({ to: "/events" }),
+    },
+    {
+      to: "/runs",
+      label: "ラン",
+      icon: <FontAwesomeIcon icon={faPersonRunning} />,
+      exact: false,
+      isActive: location.pathname.startsWith("/runs"),
+      onClick: () => router.navigate({ to: "/runs" }),
+    },
+    {
+      to: "/profile",
+      label: "プロフィール",
+      icon: <FontAwesomeIcon icon={faUser} />,
+      exact: false,
+      isActive: location.pathname.startsWith("/profile"),
+      onClick: () => router.navigate({ to: "/profile" }),
+    },
+  ];
+
   return (
     <>
-      <Outlet />
+      <div className="pb-16">
+        <Outlet />
+      </div>
+
+      {/* タブバー - 認証済みユーザーのみ表示 */}
+      {user && <TabBar items={tabItems} />}
 
       {/* Start rendering router matches */}
       <TanStackRouterDevtools position="bottom-right" />
