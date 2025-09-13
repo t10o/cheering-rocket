@@ -13,7 +13,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { firebaseApp } from "@/libs/firebase";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { AppBar } from "@cheering/ui";
 import clsx from "clsx";
 

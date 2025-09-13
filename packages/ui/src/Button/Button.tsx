@@ -45,22 +45,24 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantClasses = {
       primary: [
-        "bg-amber-600",
+        "bg-marathon-600",
         "text-white",
-        "hover:bg-amber-700",
-        "active:bg-amber-700",
+        "hover:bg-marathon-700",
+        "active:bg-marathon-700",
+        "shadow-marathon",
       ],
       secondary: [
         "bg-white",
-        "text-amber-700",
+        "text-marathon-700",
         "border",
-        "border-amber-200",
-        "hover:bg-amber-50",
+        "border-marathon-200",
+        "hover:bg-marathon-50",
+        "hover:border-marathon-300",
       ],
-      ghost: ["text-amber-600", "hover:bg-amber-50"],
+      ghost: ["text-marathon-600", "hover:bg-marathon-50"],
     } as const;
 
-    const focusRing = ["focus-visible:ring-amber-500"];
+    const focusRing = ["focus-visible:ring-marathon-500"];
 
     return (
       <button

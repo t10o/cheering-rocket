@@ -3,11 +3,11 @@ import clsx from "clsx";
 
 export type AppBarProps = {
   /** 左側に表示する要素（例: 戻るボタン等） */
-  left?: ReactNode;
+  left?: any;
   /** 中央に表示する要素（例: タイトル） */
-  center?: ReactNode;
+  center?: any;
   /** 右側に表示する要素（例: プロフィール等） */
-  right?: ReactNode;
+  right?: any;
 
   /** 高さプリセット */
   size?: "sm" | "md" | "lg";

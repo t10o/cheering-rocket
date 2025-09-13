@@ -1,0 +1,300 @@
+---
+alwaysApply: true
+---
+
+# Cheering Rocket コーディングルール
+
+## プロジェクト概要
+
+Cheering Rocketはマラソンランナー向けのアプリケーション群です。
+
+- **apps/app**: モバイルアプリ（React + TypeScript + Vite + TanStack Router + Firebase）
+- **apps/web**: Webアプリケーション
+- **packages/ui**: 共通UIコンポーネントライブラリ
+- **packages/tailwind-config**: 共通Tailwind設定
+- **packages/typescript-config**: 共通TypeScript設定
+- **packages/eslint-config**: 共通ESLint設定
+
+## 全体共通ルール
+
+### 1. 技術スタック
+
+- **フロントエンド**: React 18+, TypeScript 5+, Vite
+- **スタイリング**: Tailwind CSS
+- **状態管理**: React Hooks + Context
+- **ルーティング**: TanStack Router
+- **バックエンド**: Firebase (Firestore, Authentication, Storage)
+- **パッケージ管理**: pnpm
+- **ビルドツール**: Turbo (Monorepo)
+
+### 2. コーディング規約
+
+#### TypeScript
+
+- 厳密な型チェックを有効
+- `any`の使用は最小限に抑制
+- インターフェースより型エイリアスを優先
+
+#### React
+
+- 関数コンポーネントを使用
+- `forwardRef`でrefを適切に処理
+- プロップスの分割代入を活用
+
+#### インポート順序
+
+1. React関連
+2. 外部ライブラリ
+3. 内部コンポーネント
+4. 型定義
+5. ユーティリティ
+
+#### 命名規則
+
+- コンポーネント: PascalCase
+- 関数・変数: camelCase
+- 定数: UPPER_SNAKE_CASE
+- ファイル名: kebab-case（コンポーネントはPascalCase）
+
+### 3. アクセシビリティ原則
+
+#### React Ariaの活用
+
+- `useButton` - ボタンコンポーネント
+- `useTextField` - 入力フィールド
+- キーボードナビゲーション対応
+- スクリーンリーダー対応
+
+#### ARIA属性
+
+- `aria-label` - 要素の説明
+- `aria-describedby` - 詳細説明の参照
+- `role` - 要素の役割
+- `aria-live` - 動的コンテンツの通知
+
+### 4. パフォーマンス原則
+
+#### コード分割
+
+- ルートレベルでの分割
+- 動的インポートの活用
+
+#### メモ化
+
+- `useMemo`で重い計算をメモ化
+- `useCallback`で関数をメモ化
+
+### 5. テスト原則
+
+#### テスト対象
+
+- カスタムフック
+- ユーティリティ関数
+- 重要なビジネスロジック
+
+#### テストファイル配置
+
+- `__tests__/`ディレクトリに配置
+- テスト対象ファイルと同じ階層
+
+### 6. 開発環境
+
+#### 必須ツール
+
+- Node.js 18+
+- pnpm
+- TypeScript 5+
+- ESLint + Prettier
+
+#### 推奨設定
+
+- VSCode + TypeScript拡張
+- Tailwind CSS IntelliSense
+- React Aria拡張
+
+---
+
+## アプリケーション固有ルール
+
+### apps/app (モバイルアプリ)
+
+#### アーキテクチャ原則
+
+##### 1. Feature-based構造
+
+bulletproof-reactに基づいたfeature-basedディレクトリ構成を採用。
+
+```
+src/
+├── features/
+│   ├── auth/           # 認証関連
+│   ├── profile/        # プロフィール管理
+│   ├── events/         # イベント管理
+│   ├── runs/           # ラン管理
+│   └── invites/        # 招待管理
+├── shared/             # 共通コンポーネント・ユーティリティ
+│   └── functions/      # 横断的関数
+└── routes/             # ルート定義
+```
+
+各featureには以下の構造を配置：
+
+- `components/` - そのfeature専用のコンポーネント
+  - `container/` - Containerコンポーネント
+  - `presenter/` - Presentationalコンポーネント
+- `hooks/` - そのfeature専用のカスタムフック
+- `types/` - そのfeature専用の型定義
+- `utils/` - そのfeature専用のユーティリティ
+- `api/` - そのfeature専用のAPI呼び出し
+- `functions/` - そのfeature専用の関数
+
+##### 2. Container/Presentationalパターン
+
+アプリケーションコンポーネントはContainer/Presentationalパターンで設計する。
+
+**Containerコンポーネント**
+
+- ロジックとPresentationalコンポーネントの呼び出しを担当
+- 基本的には関数の宣言は行わない
+- 可能な限り、コンポーネント外で定義された関数を呼び出すだけ
+- カスタムフックを使用してデータ取得・状態管理
+- `components/container/`ディレクトリに配置
+
+**Presentationalコンポーネント**
+
+- UIのみに専念
+- 基本的にはステートやロジックを持たない
+- Propsにのみ依存
+- UIに必要なステート（例：アニメーション状態）は持っても良い
+- `components/presenter/`ディレクトリに配置
+
+##### 3. 関数の配置ルール
+
+**機能固有の関数**
+
+- 特定の機能でしか使用しない関数は`features/{feature}/functions/`に配置
+- 例：`features/auth/functions/signIn.ts`
+
+**横断的関数**
+
+- サイト全体で横断して使用する関数は`src/shared/functions/`に配置
+- 例：`src/shared/functions/formatDate.ts`
+
+**関数の命名規則**
+
+- `{action}{Resource}` - 例：`signInWithGoogle`, `formatRunData`
+- 非同期関数は`async/await`を使用
+- 純粋関数を優先
+
+##### 4. 型定義原則
+
+**型の命名規則**
+
+- コンポーネントProps: `{ComponentName}Props`
+- APIレスポンス: 具体的な名前（例：`UserProfile`, `Event`）
+- フォームデータ: `{Feature}FormData`
+
+**型の配置**
+
+- 各featureの`types/index.ts`に集約
+- 共通型は`shared/types/`に配置
+
+##### 5. カスタムフック原則
+
+**命名規則**
+
+- `use{FeatureName}` - 機能名ベース
+- 例：`useAuth`, `useProfile`, `useEvents`
+
+**責務分離**
+
+- データ取得: `use{Feature}`
+- フォーム管理: `use{Feature}Form`
+- 状態管理: `use{Feature}State`
+
+##### 6. API設計原則
+
+**Firebase連携**
+
+- 各featureの`api/`ディレクトリに集約
+- エラーハンドリングを適切に実装
+- 型安全性を確保
+
+**関数命名**
+
+- `{action}{Resource}` - 例：`signInWithGoogle`, `createEvent`
+- 非同期関数は`async/await`を使用
+
+##### 7. エラーハンドリング原則
+
+**ユーザーフレンドリーなエラーメッセージ**
+
+- 技術的な詳細は隠す
+- 日本語で分かりやすく表示
+- 適切なエラーレベル（error, warning, info）
+
+**エラー状態の管理**
+
+- 各カスタムフックで`error`状態を管理
+- ローディング状態も併せて管理
+
+#### マラソンアプリ特有の考慮事項
+
+**ユーザー体験**
+
+- ランニング中の使用を想定
+- 大きなタップターゲット
+- 直感的なナビゲーション
+
+**データ表示**
+
+- 距離: km単位
+- 時間: 時:分:秒形式
+- ペース: 分/km形式
+- 心拍数: bpm単位
+
+**モチベーション要素**
+
+- 達成感を感じられるUI
+- 進捗の可視化
+- マラソン関連のメタファー
+
+---
+
+### apps/web (Webアプリケーション)
+
+_Webアプリケーション固有のルールは今後追加予定_
+
+---
+
+### packages/ui (UIコンポーネントライブラリ)
+
+#### 設計原則
+
+- React Ariaを使用してアクセシビリティを考慮
+- 再利用性を重視
+- TypeScriptで型安全性を確保
+- マラソンテーマのカラーパレットを使用
+
+#### スタイリング原則
+
+**カラーパレット**
+
+```css
+/* マラソンテーマ */
+--color-marathon-*: オレンジ系（メインカラー）
+  --color-finish- *: ブルー系（完了・ゴール）
+  --color-pace- *: グリーン系（ペース・成長） /* カスタムシャドウ */
+  --shadow-soft: 軽い影 --shadow-marathon: マラソンカラーの影
+  --shadow-finish: フィニッシュカラーの影;
+```
+
+**Tailwind CSS**
+
+- ユーティリティファースト
+- カスタムカラーパレットを活用
+- レスポンシブデザイン（モバイルファースト）
+
+---
+
+このルールに従って、一貫性のある高品質なコードを作成してください。

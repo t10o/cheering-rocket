@@ -3,7 +3,50 @@
 @plugin "@digital-go-jp/tailwind-theme-plugin";
 
 @theme {
-  --font-sans: "Noto Sans JP", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-               "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", "Noto Sans",
-               Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font-sans:
+    "Noto Sans JP", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", "Noto Sans", Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+
+  /* マラソンアプリ用カラーパレット */
+  --color-marathon-50: #fef7ed;
+  --color-marathon-100: #fdedd3;
+  --color-marathon-200: #fbd9a5;
+  --color-marathon-300: #f8c06d;
+  --color-marathon-400: #f5a233;
+  --color-marathon-500: #f28c04;
+  --color-marathon-600: #e67e00;
+  --color-marathon-700: #cc6f00;
+  --color-marathon-800: #a85c00;
+  --color-marathon-900: #8b4a00;
+  --color-marathon-950: #4a2500;
+
+  --color-finish-50: #f0f9ff;
+  --color-finish-100: #e0f2fe;
+  --color-finish-200: #bae6fd;
+  --color-finish-300: #7dd3fc;
+  --color-finish-400: #38bdf8;
+  --color-finish-500: #0ea5e9;
+  --color-finish-600: #0284c7;
+  --color-finish-700: #0369a1;
+  --color-finish-800: #075985;
+  --color-finish-900: #0c4a6e;
+  --color-finish-950: #082f49;
+
+  --color-pace-50: #f0fdf4;
+  --color-pace-100: #dcfce7;
+  --color-pace-200: #bbf7d0;
+  --color-pace-300: #86efac;
+  --color-pace-400: #4ade80;
+  --color-pace-500: #22c55e;
+  --color-pace-600: #16a34a;
+  --color-pace-700: #15803d;
+  --color-pace-800: #166534;
+  --color-pace-900: #14532d;
+  --color-pace-950: #052e16;
+
+  /* カスタムシャドウ */
+  --shadow-soft: 0 2px 8px 0 rgb(0 0 0 / 0.08);
+  --shadow-marathon: 0 4px 16px 0 rgb(242 140 4 / 0.15);
+  --shadow-finish: 0 4px 16px 0 rgb(14 165 233 / 0.15);
 }

@@ -10,7 +10,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { firebaseApp } from "@/libs/firebase";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import clsx from "clsx";
 import { AppBar } from "@cheering/ui";
 
