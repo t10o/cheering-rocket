@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { BackButton } from "@/shared/components/BackButton";
 import { Button } from "@cheering/ui";
 import { EventsListContainer } from "@/features/events/components/container/EventsListContainer";
 
@@ -13,7 +12,6 @@ function EventsIndex() {
     <div className="min-h-dvh bg-gray-50">
       <PageHeader
         title="イベント"
-        left={<BackButton />}
         right={
           <div className="flex items-center gap-2">
             <Link to="/events/join">
