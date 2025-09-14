@@ -1,17 +1,12 @@
 name: Android Build and Deploy
 
+# mainブランチへのマージ時にトリガー（リリースブランチ）
 on:
   push:
     branches: [main]
     paths:
       - "apps/app/**"
-      - "packages/**"
-      - ".github/workflows/android-build.yml"
-  pull_request:
-    branches: [main]
-    paths:
-      - "apps/app/**"
-      - "packages/**"
+      - "packages/ui/**"
       - ".github/workflows/android-build.yml"
   workflow_dispatch: # 手動実行を可能にする
 
@@ -34,8 +29,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build UI package
+        run: pnpm --filter @cheering/ui build
+        # UIパッケージをビルド（appの依存関係）
+
       - name: Build web app
-        run: pnpm build
+        run: pnpm --filter app build
         # Webアプリをビルドしてdistディレクトリに出力
 
       - name: Setup Java
@@ -102,10 +101,9 @@ jobs:
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: Main branch merge (Release)" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           if [ "${{ job.status }}" = "success" ]; then
             echo "- **APK**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
-            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-              echo "- **Distribution**: Sent to Firebase App Distribution" >> $GITHUB_STEP_SUMMARY
-            fi
+            echo "- **Distribution**: Sent to Firebase App Distribution" >> $GITHUB_STEP_SUMMARY
           fi
