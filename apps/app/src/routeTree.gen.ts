@@ -14,6 +14,7 @@ import { Route as RunsIndexRouteImport } from './routes/runs/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as EventsIndexRouteImport } from './routes/events/index'
 import { Route as EventsEventIdRouteImport } from './routes/events/$eventId'
+import { Route as RunsStartIndexRouteImport } from './routes/runs/start/index'
 import { Route as EventsNewIndexRouteImport } from './routes/events/new/index'
 import { Route as EventsJoinIndexRouteImport } from './routes/events/join/index'
 import { Route as EventsEventIdIndexRouteImport } from './routes/events/$eventId/index'
@@ -43,6 +44,11 @@ const EventsIndexRoute = EventsIndexRouteImport.update({
 const EventsEventIdRoute = EventsEventIdRouteImport.update({
   id: '/events/$eventId',
   path: '/events/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RunsStartIndexRoute = RunsStartIndexRouteImport.update({
+  id: '/runs/start/',
+  path: '/runs/start/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsNewIndexRoute = EventsNewIndexRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/events/$eventId/': typeof EventsEventIdIndexRoute
   '/events/join': typeof EventsJoinIndexRoute
   '/events/new': typeof EventsNewIndexRoute
+  '/runs/start': typeof RunsStartIndexRoute
   '/events/$eventId/edit': typeof EventsEventIdEditIndexRoute
 }
 export interface FileRoutesByTo {
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/events/$eventId': typeof EventsEventIdIndexRoute
   '/events/join': typeof EventsJoinIndexRoute
   '/events/new': typeof EventsNewIndexRoute
+  '/runs/start': typeof RunsStartIndexRoute
   '/events/$eventId/edit': typeof EventsEventIdEditIndexRoute
 }
 export interface FileRoutesById {
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/events/$eventId/': typeof EventsEventIdIndexRoute
   '/events/join/': typeof EventsJoinIndexRoute
   '/events/new/': typeof EventsNewIndexRoute
+  '/runs/start/': typeof RunsStartIndexRoute
   '/events/$eventId/edit/': typeof EventsEventIdEditIndexRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/events/$eventId/'
     | '/events/join'
     | '/events/new'
+    | '/runs/start'
     | '/events/$eventId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/events/$eventId'
     | '/events/join'
     | '/events/new'
+    | '/runs/start'
     | '/events/$eventId/edit'
   id:
     | '__root__'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/events/$eventId/'
     | '/events/join/'
     | '/events/new/'
+    | '/runs/start/'
     | '/events/$eventId/edit/'
   fileRoutesById: FileRoutesById
 }
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   AuthSigninIndexRoute: typeof AuthSigninIndexRoute
   EventsJoinIndexRoute: typeof EventsJoinIndexRoute
   EventsNewIndexRoute: typeof EventsNewIndexRoute
+  RunsStartIndexRoute: typeof RunsStartIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       path: '/events/$eventId'
       fullPath: '/events/$eventId'
       preLoaderRoute: typeof EventsEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/runs/start/': {
+      id: '/runs/start/'
+      path: '/runs/start'
+      fullPath: '/runs/start'
+      preLoaderRoute: typeof RunsStartIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events/new/': {
@@ -254,6 +274,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSigninIndexRoute: AuthSigninIndexRoute,
   EventsJoinIndexRoute: EventsJoinIndexRoute,
   EventsNewIndexRoute: EventsNewIndexRoute,
+  RunsStartIndexRoute: RunsStartIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

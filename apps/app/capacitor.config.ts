@@ -7,6 +7,9 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: "https",
   },
+  android: {
+    useLegacyBridge: true,
+  },
   plugins: {
     FirebaseAuthentication: {
       providers: ["google.com", "apple.com"],
@@ -20,6 +23,14 @@ const config: CapacitorConfig = {
       navigationBarColor: "#00000000",
       navigationBarContent: "light",
       offset: 0,
+    },
+    Geolocation: {
+      permissions: ["location"],
+    },
+    LocalNotifications: {
+      smallIcon: "ic_stat_icon_config_sample",
+      iconColor: "#488AFF",
+      sound: "beep.wav",
     },
   },
 };

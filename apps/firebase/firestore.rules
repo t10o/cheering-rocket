@@ -42,5 +42,26 @@ service cloud.firestore {
       // 書き込みは本人のみ
       allow create, update, delete: if authed() && request.auth.uid == uid;
     }
+
+    // === ラン機能 ===
+    match /runs/{runId} {
+      // ランは本人のみ読み書き可能
+      allow read, write: if authed() && resource.data.userId == request.auth.uid;
+      allow create: if authed() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // === 位置情報 ===
+    match /locationPoints/{locationId} {
+      // 位置情報は本人のみ読み書き可能
+      allow read, write: if authed() && resource.data.runId != null;
+      allow create: if authed() && request.resource.data.runId != null;
+    }
+
+    // === 応援メッセージ ===
+    match /cheerMessages/{messageId} {
+      // 応援メッセージは本人のランに関連するもののみ読み書き可能
+      allow read, write: if authed();
+      allow create: if authed();
+    }
   }
 }

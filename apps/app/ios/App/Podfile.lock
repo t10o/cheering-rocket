@@ -1,6 +1,8 @@
 PODS:
   - Capacitor (7.4.3):
     - CapacitorCordova
+  - CapacitorCommunityBackgroundGeolocation (1.2.26):
+    - Capacitor
   - CapacitorCommunitySafeArea (7.0.0-alpha.1):
     - Capacitor
   - CapacitorCordova (7.4.3)
@@ -11,6 +13,11 @@ PODS:
   - CapacitorFirebaseAuthentication/Lite (7.3.1):
     - Capacitor
     - FirebaseAuth (~> 11.7.0)
+  - CapacitorGeolocation (7.1.5):
+    - Capacitor
+    - IONGeolocationLib (= 1.0.1)
+  - CapacitorLocalNotifications (7.0.3):
+    - Capacitor
   - FirebaseAppCheckInterop (11.15.0)
   - FirebaseAuth (11.7.0):
     - FirebaseAppCheckInterop (~> 11.0)
@@ -52,13 +59,17 @@ PODS:
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
   - GTMSessionFetcher/Core (4.5.0)
+  - IONGeolocationLib (1.0.1)
   - RecaptchaInterop (100.0.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@7.4.3_@capacitor+core@7.4.3/node_modules/@capacitor/ios`)"
+  - "CapacitorCommunityBackgroundGeolocation (from `../../../../node_modules/.pnpm/@capacitor-community+background-geolocation@1.2.26_@capacitor+core@7.4.3/node_modules/@capacitor-community/background-geolocation`)"
   - "CapacitorCommunitySafeArea (from `../../../../node_modules/.pnpm/@capacitor-community+safe-area@7.0.0-alpha.1_@capacitor+core@7.4.3/node_modules/@capacitor-community/safe-area`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@7.4.3_@capacitor+core@7.4.3/node_modules/@capacitor/ios`)"
   - "CapacitorFirebaseAuthentication (from `../../../../node_modules/.pnpm/@capacitor-firebase+authentication@7.3.1_@capacitor+core@7.4.3_firebase@12.2.1/node_modules/@capacitor-firebase/authentication`)"
+  - "CapacitorGeolocation (from `../../../../node_modules/.pnpm/@capacitor+geolocation@7.1.5_@capacitor+core@7.4.3/node_modules/@capacitor/geolocation`)"
+  - "CapacitorLocalNotifications (from `../../../../node_modules/.pnpm/@capacitor+local-notifications@7.0.3_@capacitor+core@7.4.3/node_modules/@capacitor/local-notifications`)"
 
 SPEC REPOS:
   trunk:
@@ -70,23 +81,33 @@ SPEC REPOS:
     - FirebaseCoreInternal
     - GoogleUtilities
     - GTMSessionFetcher
+    - IONGeolocationLib
     - RecaptchaInterop
 
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@7.4.3_@capacitor+core@7.4.3/node_modules/@capacitor/ios"
+  CapacitorCommunityBackgroundGeolocation:
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+background-geolocation@1.2.26_@capacitor+core@7.4.3/node_modules/@capacitor-community/background-geolocation"
   CapacitorCommunitySafeArea:
     :path: "../../../../node_modules/.pnpm/@capacitor-community+safe-area@7.0.0-alpha.1_@capacitor+core@7.4.3/node_modules/@capacitor-community/safe-area"
   CapacitorCordova:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@7.4.3_@capacitor+core@7.4.3/node_modules/@capacitor/ios"
   CapacitorFirebaseAuthentication:
     :path: "../../../../node_modules/.pnpm/@capacitor-firebase+authentication@7.3.1_@capacitor+core@7.4.3_firebase@12.2.1/node_modules/@capacitor-firebase/authentication"
+  CapacitorGeolocation:
+    :path: "../../../../node_modules/.pnpm/@capacitor+geolocation@7.1.5_@capacitor+core@7.4.3/node_modules/@capacitor/geolocation"
+  CapacitorLocalNotifications:
+    :path: "../../../../node_modules/.pnpm/@capacitor+local-notifications@7.0.3_@capacitor+core@7.4.3/node_modules/@capacitor/local-notifications"
 
 SPEC CHECKSUMS:
   Capacitor: 28d6c01026a9a3f7156529498ec1f389a2a28dbc
+  CapacitorCommunityBackgroundGeolocation: 750523ec6dd1cc94cf4e2bf7787605106753f73c
   CapacitorCommunitySafeArea: 3f049619072ab5d0da2529bcb05b358ff6c13dc1
   CapacitorCordova: 435121e81a2df4d0034f0fb11fcefab5104cfdb5
   CapacitorFirebaseAuthentication: d966e29421168f94621b8df9bc8ddf602b261fc7
+  CapacitorGeolocation: 84f868bea4c2499aebc3bb3a88fd0a508f87ab87
+  CapacitorLocalNotifications: 0811aef56ab2e5f7f9ae72f47d3473ab50c29038
   FirebaseAppCheckInterop: 06fe5a3799278ae4667e6c432edd86b1030fa3df
   FirebaseAuth: 77e25aa24f3e1c626c5babd3338551fc1669ee0e
   FirebaseAuthInterop: 7087d7a4ee4bc4de019b2d0c240974ed5d89e2fd
@@ -95,8 +116,9 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: d6c17dafc8dc33614733a8b52df78fcb4394c881
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   GTMSessionFetcher: fc75fc972958dceedee61cb662ae1da7a83a91cf
+  IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
 
-PODFILE CHECKSUM: 5b9dc364e600ce03f93282606b670e7ccd1efc0d
+PODFILE CHECKSUM: 923c27764ff3a2ebcbe8875b4067443151f8c18f
 
 COCOAPODS: 1.16.2
