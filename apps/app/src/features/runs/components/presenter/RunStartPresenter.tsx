@@ -78,6 +78,14 @@ export const RunStartPresenter = ({
                   : "border-gray-200 hover:border-gray-300"
               }`}
               onClick={() => onEventSelect(event.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onEventSelect(event.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
               <div className="flex items-center justify-between">
                 <div>

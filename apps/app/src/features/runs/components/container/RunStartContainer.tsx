@@ -1,7 +1,8 @@
 import { useState } from "react";
+
+import { useBackgroundGeolocation } from "../../hooks/useBackgroundGeolocation";
 import { useRunManager } from "../../hooks/useRunManager";
 import { useTodayEvents } from "../../hooks/useTodayEvents";
-import { useBackgroundGeolocation } from "../../hooks/useBackgroundGeolocation";
 import { RunStartPresenter } from "../presenter/RunStartPresenter";
 
 export const RunStartContainer = () => {
