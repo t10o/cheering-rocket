@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
+import { captureException } from "@/libs/sentry";
 import { getAuth, updateProfile as updateAuthProfile } from "firebase/auth";
 import {
   doc,
@@ -17,7 +18,7 @@ import {
 
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
-import type { ProfileFormData,UserProfile } from "../types";
+import type { ProfileFormData, UserProfile } from "../types";
 
 import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
 
@@ -97,8 +98,10 @@ export const useProfile = () => {
       });
 
       return true;
-    } catch (e: any) {
-      setError(e?.message ?? "更新に失敗しました");
+    } catch (e: unknown) {
+      console.error("プロフィール更新エラー:", e);
+      captureException(e, "プロフィール更新エラー");
+      setError((e as Error)?.message ?? "更新に失敗しました");
       return false;
     } finally {
       setSaving(false);

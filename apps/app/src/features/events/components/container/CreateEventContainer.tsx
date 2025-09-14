@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { captureException } from "@/libs/sentry";
 import { useNavigate } from "@tanstack/react-router";
 
 import { createEvent, type CreateEventData } from "../../functions/createEvent";
@@ -28,6 +29,8 @@ export const CreateEventContainer = () => {
       // 完了 → 詳細へ
       navigate({ to: "/events/$eventId", params: { eventId } });
     } catch (e: unknown) {
+      console.error("イベント作成エラー:", e);
+      captureException(e, "イベント作成エラー");
       setError((e as Error)?.message ?? "作成に失敗しました");
     } finally {
       setSaving(false);

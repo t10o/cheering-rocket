@@ -1,16 +1,18 @@
+import { type Timestamp } from "firebase/firestore";
+
 export type Run = {
   id: string;
   userId: string;
   distance: number; // km
   duration: number; // minutes
   pace: number; // minutes per km
-  date: any; // Firestore Timestamp
+  date: Timestamp;
   notes?: string;
   weather?: string;
   temperature?: number;
   heartRate?: number;
-  createdAt: any; // Firestore Timestamp
-  updatedAt: any; // Firestore Timestamp
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 };
 
 export type RunFormData = {

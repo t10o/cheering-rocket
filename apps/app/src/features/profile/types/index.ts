@@ -1,9 +1,11 @@
+import { type Timestamp } from "firebase/firestore";
+
 export type UserProfile = {
   uid: string;
   name: string;
   photoURL: string;
-  createdAt?: any; // Firestore Timestamp
-  updatedAt?: any; // Firestore Timestamp
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 };
 
 export type ProfileFormData = {

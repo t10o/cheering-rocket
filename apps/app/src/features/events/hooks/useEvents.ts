@@ -1,4 +1,4 @@
-import { useEffect, useMemo,useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   collectionGroup,
   DocumentReference,
@@ -12,6 +12,8 @@ import {
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
 import type { Event } from "../types";
+
+import { captureException } from "@/libs/sentry";
 
 export const useEvents = () => {
   const { user } = useAuth();
@@ -45,16 +47,16 @@ export const useEvents = () => {
         for (const ref of eventRefs) {
           try {
             const s = await getDoc(ref);
-            const data = s.data() as any;
+            const data = s.data() as Event;
             if (!data) continue;
             evs.push({
               id: s.id,
               name: data.name ?? "",
-              plannedAt: data.plannedAt ?? null,
+              ...(data.plannedAt && { plannedAt: data.plannedAt }),
               note: data.note ?? "",
               ownerUid: data.ownerUid ?? "",
-              createdAt: data.createdAt,
-              updatedAt: data.updatedAt,
+              ...(data.createdAt && { createdAt: data.createdAt }),
+              ...(data.updatedAt && { updatedAt: data.updatedAt }),
             });
           } catch (err) {
             // 読めないイベント（権限切れ等）はスキップ
@@ -67,8 +69,10 @@ export const useEvents = () => {
             (b.plannedAt?.toMillis?.() || 0) - (a.plannedAt?.toMillis?.() || 0),
         );
         setEvents(evs);
-      } catch (err: any) {
-        setError(err?.message ?? "イベントの取得に失敗しました");
+      } catch (err) {
+        console.error("イベントの取得エラー:", err);
+        captureException(err, "イベントの取得エラー");
+        setError((err as Error)?.message ?? "イベントの取得に失敗しました");
       } finally {
         setLoading(false);
       }

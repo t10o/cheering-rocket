@@ -10,7 +10,6 @@ export type EventDetailPresenterProps = {
   members: MemberView[];
   eventId: string;
   cheerUrl: string;
-  isOwner: boolean;
   onCopyEventId: () => void;
   onCopyCheerUrl: () => void;
   isHeicImage: (url: string) => boolean;
@@ -21,7 +20,6 @@ export const EventDetailPresenter = ({
   members,
   eventId,
   cheerUrl,
-  isOwner: _isOwner,
   onCopyEventId,
   onCopyCheerUrl,
   isHeicImage,
@@ -40,7 +38,11 @@ export const EventDetailPresenter = ({
             <InfoRow
               icon="📅"
               label="ランの予定日"
-              value={event.plannedAt?.toDate?.().toLocaleString?.() ?? "未設定"}
+              value={
+                event.plannedAt instanceof Date
+                  ? event.plannedAt.toLocaleString()
+                  : (event.plannedAt?.toDate?.()?.toLocaleString() ?? "未設定")
+              }
             />
             <InfoRow icon="📝" label="備考" value={event.note || "—"} />
           </div>

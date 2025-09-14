@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { type Timestamp } from "firebase/firestore";
 
 import { Card } from "@cheering/ui";
 
@@ -7,7 +8,7 @@ import type { Event } from "../../types";
 export type EventCardPresenterProps = {
   event: Event;
   className?: string;
-  formatDate: (timestamp: any) => string;
+  formatDate: (timestamp: Date | Timestamp | null | undefined) => string;
 };
 
 export const EventCardPresenter = ({

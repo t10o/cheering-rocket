@@ -1,4 +1,4 @@
-import { useEffect, useMemo,useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   collection,
   getDocs,
@@ -12,6 +12,8 @@ import {
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
 import type { Run, RunStats } from "../types";
+
+import { captureException } from "@/libs/sentry";
 
 export const useRuns = () => {
   const { user } = useAuth();
@@ -40,7 +42,7 @@ export const useRuns = () => {
         const runsData: Run[] = [];
 
         snapshot.forEach((doc) => {
-          const data = doc.data() as any;
+          const data = doc.data() as Omit<Run, "id">;
           runsData.push({
             id: doc.id,
             ...data,
@@ -48,8 +50,10 @@ export const useRuns = () => {
         });
 
         setRuns(runsData);
-      } catch (err: any) {
-        setError(err?.message ?? "ランレコードの取得に失敗しました");
+      } catch (err) {
+        console.error("ランレコードの取得エラー:", err);
+        captureException(err, "ランレコードの取得エラー");
+        setError((err as Error)?.message ?? "ランレコードの取得に失敗しました");
       } finally {
         setLoading(false);
       }

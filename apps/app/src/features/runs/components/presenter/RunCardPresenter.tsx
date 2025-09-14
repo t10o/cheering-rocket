@@ -1,3 +1,5 @@
+import { type Timestamp } from "firebase/firestore";
+
 import { Card } from "@cheering/ui";
 
 import type { Run } from "../../types";
@@ -5,7 +7,7 @@ import type { Run } from "../../types";
 export type RunCardPresenterProps = {
   run: Run;
   className?: string;
-  formatDate: (timestamp: any) => string;
+  formatDate: (timestamp: Date | Timestamp | null | undefined) => string;
   formatPace: (pace: number) => string;
   formatDuration: (duration: number) => string;
 };

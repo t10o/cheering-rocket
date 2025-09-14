@@ -1,3 +1,5 @@
+import { type Timestamp } from "firebase/firestore";
+
 export type CreateEventData = {
   name: string;
   date: string;
@@ -7,7 +9,7 @@ export type CreateEventData = {
 
 export type EventLite = {
   name: string;
-  plannedAt?: any;
+  plannedAt?: Date | Timestamp;
   note?: string;
   ownerUid: string;
   joinable?: boolean;

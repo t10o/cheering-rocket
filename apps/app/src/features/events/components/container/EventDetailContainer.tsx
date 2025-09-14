@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import * as Sentry from "@sentry/react";
 
 import {
   copyToClipboard,
@@ -11,8 +12,6 @@ import {
 import { EventDetailPresenter } from "../presenter/EventDetailPresenter";
 import { EventDetailSkeleton } from "../presenter/EventDetailSkeleton";
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
-
 export type EventDetailContainerProps = {
   eventId: string;
 };
@@ -20,7 +19,6 @@ export type EventDetailContainerProps = {
 export const EventDetailContainer = ({
   eventId,
 }: EventDetailContainerProps) => {
-  const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [members, setMembers] = useState<MemberView[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +33,7 @@ export const EventDetailContainer = ({
         setMembers(membersData);
       } catch (error) {
         console.error("Failed to load event detail:", error);
+        Sentry.captureException(error);
       } finally {
         setLoading(false);
       }
@@ -48,6 +47,7 @@ export const EventDetailContainer = ({
       await copyToClipboard(eventId);
     } catch (error) {
       console.error("Failed to copy event ID:", error);
+      Sentry.captureException(error);
     }
   };
 
@@ -57,6 +57,7 @@ export const EventDetailContainer = ({
       await copyToClipboard(cheerUrl);
     } catch (error) {
       console.error("Failed to copy cheer URL:", error);
+      Sentry.captureException(error);
     }
   };
 
@@ -65,7 +66,6 @@ export const EventDetailContainer = ({
   }
 
   const cheerUrl = generateCheerUrl(eventId);
-  const isOwner = !!(user && event && event.ownerUid === user.uid);
 
   return (
     <EventDetailPresenter
@@ -73,7 +73,6 @@ export const EventDetailContainer = ({
       members={members}
       eventId={eventId}
       cheerUrl={cheerUrl}
-      isOwner={isOwner}
       onCopyEventId={handleCopyEventId}
       onCopyCheerUrl={handleCopyCheerUrl}
       isHeicImage={isHeicImage}

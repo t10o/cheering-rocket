@@ -9,6 +9,7 @@ import {
 import { JoinEventPresenter } from "../presenter/JoinEventPresenter";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { captureException } from "@/libs/sentry";
 
 export const JoinEventContainer = () => {
   const { user } = useAuth();
@@ -29,7 +30,9 @@ export const JoinEventContainer = () => {
     try {
       const result = await searchEvent(id);
       setHit({ id: result.id, data: result.data! });
-    } catch (e: unknown) {
+    } catch (e) {
+      console.error("イベント検索エラー:", e);
+      captureException(e, "イベント検索エラー");
       setError((e as Error).message || "取得に失敗しました");
     } finally {
       setLoading(false);
@@ -45,7 +48,9 @@ export const JoinEventContainer = () => {
       await joinEvent(hit.id, user.uid);
       // 参加完了 → 詳細へ
       navigate({ to: "/events/$eventId", params: { eventId: hit.id } });
-    } catch (e: unknown) {
+    } catch (e) {
+      console.error("イベント参加エラー:", e);
+      captureException(e, "イベント参加エラー");
       setError((e as Error).message || "参加に失敗しました");
     } finally {
       setJoining(false);

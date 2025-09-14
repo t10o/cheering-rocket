@@ -1,5 +1,6 @@
 import { Capacitor } from "@capacitor/core";
 import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
+import * as Sentry from "@sentry/react";
 import {
   type Auth,
   browserPopupRedirectResolver,
@@ -27,8 +28,9 @@ export function getAuthInstance(): Auth {
       persistence: indexedDBLocalPersistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
-  } catch {
+  } catch (e) {
     _auth = auth;
+    Sentry.captureException(e);
   }
 
   return _auth;

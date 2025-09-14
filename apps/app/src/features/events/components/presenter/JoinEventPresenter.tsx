@@ -59,8 +59,10 @@ export const JoinEventPresenter = ({
               {hit.data.name ?? "イベント"}
             </div>
             <div className="text-sm text-gray-500">
-              {hit.data.plannedAt?.toDate?.().toLocaleString?.() ??
-                "日時未設定"}
+              {hit.data.plannedAt instanceof Date
+                ? hit.data.plannedAt.toLocaleString()
+                : (hit.data.plannedAt?.toDate?.()?.toLocaleString() ??
+                  "日時未設定")}
             </div>
             {hit.data.note && (
               <p className="text-sm text-gray-700 whitespace-pre-wrap">

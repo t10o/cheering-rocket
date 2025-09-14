@@ -2,12 +2,13 @@ import {
   faPersonRunning,
   faUser,
   faUsers,
+  type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 
 export type MenuItem = {
   to: string;
   label: string;
-  icon: any;
+  icon: IconDefinition;
   description: string;
 };
 

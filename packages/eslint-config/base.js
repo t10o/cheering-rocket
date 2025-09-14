@@ -12,8 +12,8 @@ export default [
       "**/build/**",
       "**/.next/**",
       "apps/runner/android/**",
-      "apps/runner/ios/**"
-    ]
+      "apps/runner/ios/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -21,35 +21,43 @@ export default [
     files: ["**/*.{ts,tsx,js,jsx}"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module"
+      sourceType: "module",
     },
     plugins: {
       "unused-imports": unusedImports,
-      "simple-import-sort": simpleImportSort
+      "simple-import-sort": simpleImportSort,
     },
     linterOptions: {
-      reportUnusedDisableDirectives: true
+      reportUnusedDisableDirectives: true,
     },
     rules: {
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "warn",
-        { vars: "all", varsIgnorePattern: "^_", args: "after-used", argsIgnorePattern: "^_" }
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
       ],
-      "simple-import-sort/imports": ["error", {
-        groups: [
-          ["^\\u0000"],
-          ["^node:", "^fs$", "^path$", "^url$"],
-          ["^react$", "^react-.+", "^@?\\w"],
-          ["^@cheering(/.*)?$"],
-          ["^\\.\\.(?!/?$).*$", "^\\.\\./?$"],
-          ["^\\./(?=.*/)(?!/?$).*$", "^\\.(?!/?$).*$", "^\\./?$"],
-          ["^.+\\.s?css$"]
-        ]
-      }],
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            ["^\\u0000"],
+            ["^node:", "^fs$", "^path$", "^url$"],
+            ["^react$", "^react-.+", "^@?\\w"],
+            ["^@cheering(/.*)?$"],
+            ["^\\.\\.(?!/?$).*$", "^\\.\\./?$"],
+            ["^\\./(?=.*/)(?!/?$).*$", "^\\.(?!/?$).*$", "^\\./?$"],
+            ["^.+\\.s?css$"],
+          ],
+        },
+      ],
       "simple-import-sort/exports": "error",
       "no-console": ["warn", { allow: ["warn", "error"] }],
-      "no-debugger": "warn"
-    }
-  }
+      "no-debugger": "warn",
+    },
+  },
 ];

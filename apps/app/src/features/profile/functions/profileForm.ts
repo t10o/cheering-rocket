@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+
 import type { ProfileFormData } from "../types";
 
 import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
@@ -26,6 +28,7 @@ export const handleFileSelect = async (
     }));
   } catch (error) {
     console.error("画像変換に失敗しました:", error);
+    Sentry.captureException(error);
     // 変換に失敗した場合は元のファイルを使用
     const preview = URL.createObjectURL(file);
     setFormData((prev) => ({
@@ -39,16 +42,13 @@ export const handleFileSelect = async (
 export const handleNameChange = (
   value: string,
   setFormData: React.Dispatch<React.SetStateAction<ProfileFormData>>,
-  setDirty: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   setFormData((prev) => ({ ...prev, name: value }));
-  setDirty(true);
 };
 
 export const handleSave = async (
   formData: ProfileFormData,
   saveProfile: (data: ProfileFormData) => Promise<boolean | undefined>,
-  setDirty: React.Dispatch<React.SetStateAction<boolean>>,
   setToast: React.Dispatch<React.SetStateAction<string | null>>,
 ) => {
   if (!formData.name.trim()) {
@@ -57,7 +57,6 @@ export const handleSave = async (
 
   const success = await saveProfile(formData);
   if (success) {
-    setDirty(false);
     setToast("保存に成功しました");
     setTimeout(() => setToast(null), 2000);
   }

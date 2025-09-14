@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import {
   collection,
   doc,
@@ -6,6 +7,7 @@ import {
   getDocs,
   getFirestore,
   query,
+  type Timestamp,
   where,
 } from "firebase/firestore";
 
@@ -13,7 +15,7 @@ import { firebaseApp } from "@/libs/firebase";
 
 export type Event = {
   name: string;
-  plannedAt?: any;
+  plannedAt?: Date | Timestamp;
   note?: string;
   ownerUid: string;
   joinable?: boolean;
@@ -40,7 +42,7 @@ export const fetchEventDetail = async (eventId: string) => {
   );
   const baseMembers = membersSnapshot.docs.map((d) => ({
     uid: d.id,
-    role: (d.data() as any)?.role ?? "member",
+    role: (d.data() as { role?: string })?.role ?? "member",
   }));
 
   // users から名前と写真URLをまとめ取得（最大10件ずつ）
@@ -54,10 +56,10 @@ export const fetchEventDetail = async (eventId: string) => {
     );
     const userSnapshot = await getDocs(userQuery);
     userSnapshot.docs.forEach((u) => {
-      const userData = u.data() as any;
+      const userData = u.data() as { name?: string; photoUrl?: string };
       userDataMap.set(u.id, {
         name: userData?.name ?? "",
-        photoUrl: userData?.photoURL, // Firebaseでは photoURL (大文字)
+        ...(userData?.photoUrl && { photoUrl: userData.photoUrl }),
       });
     });
   }
@@ -111,8 +113,10 @@ export const isHeicImage = (url: string): boolean => {
       if (contentType && contentType.toLowerCase().includes("heic")) {
         return true;
       }
-    } catch (_e) {
+    } catch (error) {
       // URL解析エラーの場合は拡張子のみで判定
+      console.warn("URL解析エラー:", error);
+      Sentry.captureException(error);
     }
   }
 

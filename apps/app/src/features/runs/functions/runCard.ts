@@ -1,7 +1,11 @@
-import { formatDate } from "@/shared/functions/formatDate";
-import { formatDuration,formatPace } from "@/shared/functions/formatRunData";
+import { type Timestamp } from "firebase/firestore";
 
-export const formatRunDate = (timestamp: any): string => {
+import { formatDate } from "@/shared/functions/formatDate";
+import { formatDuration, formatPace } from "@/shared/functions/formatRunData";
+
+export const formatRunDate = (
+  timestamp: Date | Timestamp | null | undefined,
+): string => {
   return formatDate(timestamp);
 };
 

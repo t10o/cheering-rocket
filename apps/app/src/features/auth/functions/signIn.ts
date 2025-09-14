@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { useRouter } from "@tanstack/react-router";
 
 import { signInWithGoogle } from "../api/authApi";
@@ -10,6 +11,7 @@ export const handleSignInWithGoogle = async (
     router.navigate({ to: "/" });
   } catch (error) {
     console.error("Sign-in error:", error);
+    Sentry.captureException(error);
     // TODO: エラーハンドリングを改善
     alert("サインインに失敗しました");
   }

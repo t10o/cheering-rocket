@@ -31,7 +31,7 @@ export const changeHeicExtensionToJpg = (fileName: string): string => {
  * @param convertedBlob 変換結果のBlob
  * @returns 有効な場合true
  */
-export const isValidConversionResult = (convertedBlob: any): boolean => {
+export const isValidConversionResult = (convertedBlob: unknown): boolean => {
   return convertedBlob !== null && convertedBlob !== undefined;
 };
 
@@ -40,6 +40,9 @@ export const isValidConversionResult = (convertedBlob: any): boolean => {
  * @param convertedBlob 変換結果（配列または単一のBlob）
  * @returns 最初のBlob
  */
-export const getFirstBlob = (convertedBlob: any): any => {
-  return Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+export const getFirstBlob = (convertedBlob: unknown): Blob => {
+  if (Array.isArray(convertedBlob)) {
+    return convertedBlob[0] as Blob;
+  }
+  return convertedBlob as Blob;
 };

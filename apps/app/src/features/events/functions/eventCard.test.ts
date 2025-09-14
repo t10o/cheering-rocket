@@ -1,4 +1,5 @@
-import { describe, expect,it } from "vitest";
+import type { Timestamp } from "firebase/firestore";
+import { describe, expect, it } from "vitest";
 
 import { formatEventDate } from "./eventCard";
 
@@ -7,7 +8,7 @@ describe("eventCard", () => {
     it("タイムスタンプを正しくフォーマットする", () => {
       const mockTimestamp = {
         toDate: () => new Date("2025-11-09T08:20:00Z"),
-      };
+      } as unknown as Date | Timestamp;
 
       const result = formatEventDate(mockTimestamp);
       expect(result).toBe("2025年11月9日 17:20"); // JST timezone with Japanese format
@@ -24,7 +25,9 @@ describe("eventCard", () => {
     });
 
     it("toDateメソッドがないタイムスタンプを処理する", () => {
-      const mockTimestamp = { someProperty: "value" };
+      const mockTimestamp = { someProperty: "value" } as unknown as
+        | Date
+        | Timestamp;
       const result = formatEventDate(mockTimestamp);
       expect(result).toBe("日時未設定");
     });

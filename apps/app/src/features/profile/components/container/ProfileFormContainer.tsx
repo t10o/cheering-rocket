@@ -17,7 +17,6 @@ export const ProfileFormContainer = () => {
     pendingAvatarFile: null,
     pendingPreviewURL: null,
   });
-  const [_dirty, setDirty] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // プロフィールデータが読み込まれたらフォームに反映
@@ -29,21 +28,19 @@ export const ProfileFormContainer = () => {
         pendingAvatarFile: null,
         pendingPreviewURL: null,
       });
-      setDirty(false);
     }
   }, [profile]);
 
   const onFileSelect = async (file: File) => {
     await handleFileSelect(file, setFormData);
-    setDirty(true);
   };
 
   const onNameChange = (value: string) => {
-    handleNameChange(value, setFormData, setDirty);
+    handleNameChange(value, setFormData);
   };
 
   const onSave = async () => {
-    await handleSave(formData, saveProfile, setDirty, setToast);
+    await handleSave(formData, saveProfile, setToast);
   };
 
   const onToastClose = () => {

@@ -48,6 +48,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { labelProps, inputProps, descriptionProps, errorMessageProps } =
     useTextField(textFieldOptions, domRef);
 
+  // input要素はchildrenを持たないので、childrenを除外
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { children, ...inputPropsWithoutChildren } = inputProps;
+
   const hasError = variant === "error" || !!errorMessage;
 
   const base = [
@@ -125,7 +129,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           </div>
         )}
         <input
-          {...inputProps}
+          {...inputPropsWithoutChildren}
           onChange={(e) => {
             // react-ariaのonChangeと独自のonChangeの両方を呼び出す
             if (inputProps.onChange) {

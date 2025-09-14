@@ -1,18 +1,20 @@
+import { type Timestamp } from "firebase/firestore";
+
 export type Event = {
   id: string;
   name: string;
-  plannedAt?: any; // Firestore Timestamp
+  plannedAt?: Timestamp;
   note?: string;
   ownerUid: string;
-  createdAt?: any; // Firestore Timestamp
-  updatedAt?: any; // Firestore Timestamp
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 };
 
 export type EventMember = {
   uid: string;
   name: string;
   photoURL?: string;
-  joinedAt: any; // Firestore Timestamp
+  joinedAt: Timestamp;
 };
 
 export type EventFormData = {
