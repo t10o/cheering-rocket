@@ -11,7 +11,7 @@ import {
   validateEventData,
   normalizeEventData,
   toTimestamp,
-  CreateEventData,
+  type CreateEventData,
 } from "./eventValidation";
 
 export const createEvent = async (data: CreateEventData, userUid: string) => {
@@ -47,3 +47,5 @@ export const createEvent = async (data: CreateEventData, userUid: string) => {
 
   return eventRef.id;
 };
+
+export type { CreateEventData };

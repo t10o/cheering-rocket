@@ -36,16 +36,16 @@ export const CreateEventContainer = () => {
     <CreateEventPresenter
       formData={formData}
       onNameChange={(value) =>
-        setFormData((prev) => ({ ...prev, name: value }))
+        setFormData((prev: CreateEventData) => ({ ...prev, name: value }))
       }
       onDateChange={(value) =>
-        setFormData((prev) => ({ ...prev, date: value }))
+        setFormData((prev: CreateEventData) => ({ ...prev, date: value }))
       }
       onTimeChange={(value) =>
-        setFormData((prev) => ({ ...prev, time: value }))
+        setFormData((prev: CreateEventData) => ({ ...prev, time: value }))
       }
       onNoteChange={(value) =>
-        setFormData((prev) => ({ ...prev, note: value }))
+        setFormData((prev: CreateEventData) => ({ ...prev, note: value }))
       }
       onSubmit={handleSubmit}
       saving={saving}

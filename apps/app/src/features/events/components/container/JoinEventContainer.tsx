@@ -26,7 +26,7 @@ export const JoinEventContainer = () => {
     setLoading(true);
     try {
       const result = await searchEvent(id);
-      setHit(result);
+      setHit({ id: result.id, data: result.data! });
     } catch (e: any) {
       setError(e.message || "取得に失敗しました");
     } finally {

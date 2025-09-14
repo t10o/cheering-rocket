@@ -13,6 +13,8 @@ import {
   type EventLite,
 } from "./eventValidation";
 
+export type { EventLite };
+
 export const searchEvent = async (eventId: string) => {
   const db = getFirestore(firebaseApp);
   const eventDoc = await getDoc(doc(db, "events", eventId));
