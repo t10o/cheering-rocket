@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  collection,
+  collectionGroup,
   getDocs,
   getFirestore,
   limit,
@@ -30,7 +30,7 @@ export const useRuns = () => {
       setError(null);
 
       try {
-        const runsRef = collection(db, "runs");
+        const runsRef = collectionGroup(db, "runs");
         const q = query(
           runsRef,
           where("userId", "==", user.uid),

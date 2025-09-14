@@ -50,6 +50,13 @@ service cloud.firestore {
       allow create: if authed() && request.resource.data.userId == request.auth.uid;
     }
 
+    // === collectionGroup("runs") 対応 ===
+    match /{path=**}/runs/{runId} {
+      // ランは本人のみ読み書き可能
+      allow read, write: if authed() && resource.data.userId == request.auth.uid;
+      allow create: if authed() && request.resource.data.userId == request.auth.uid;
+    }
+
     // === 位置情報 ===
     match /locationPoints/{locationId} {
       // 位置情報は本人のみ読み書き可能
@@ -57,8 +64,22 @@ service cloud.firestore {
       allow create: if authed() && request.resource.data.runId != null;
     }
 
+    // === collectionGroup("locationPoints") 対応 ===
+    match /{path=**}/locationPoints/{locationId} {
+      // 位置情報は本人のみ読み書き可能
+      allow read, write: if authed() && resource.data.runId != null;
+      allow create: if authed() && request.resource.data.runId != null;
+    }
+
     // === 応援メッセージ ===
     match /cheerMessages/{messageId} {
+      // 応援メッセージは本人のランに関連するもののみ読み書き可能
+      allow read, write: if authed();
+      allow create: if authed();
+    }
+
+    // === collectionGroup("cheerMessages") 対応 ===
+    match /{path=**}/cheerMessages/{messageId} {
       // 応援メッセージは本人のランに関連するもののみ読み書き可能
       allow read, write: if authed();
       allow create: if authed();
