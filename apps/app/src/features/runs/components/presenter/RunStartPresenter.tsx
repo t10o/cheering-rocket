@@ -1,4 +1,5 @@
 import { Button } from "@cheering/ui";
+
 import type { Event } from "../../../events/types";
 
 export type RunStartPresenterProps = {
@@ -119,7 +120,7 @@ export const RunStartPresenter = ({
       <div className="space-y-4">
         <Button
           onClick={onStartRun}
-          disabled={!selectedEventId || startLoading}
+          isDisabled={!selectedEventId || startLoading}
           className="w-full"
           size="lg"
         >

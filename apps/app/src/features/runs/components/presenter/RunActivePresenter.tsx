@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import { Button } from "@cheering/ui";
+
 import type { ActiveRun } from "../../hooks/useRunManager";
 
 export type RunActivePresenterProps = {
@@ -61,13 +63,15 @@ export const RunActivePresenter = ({
     for (let i = 1; i < locations.length; i++) {
       const prev = locations[i - 1];
       const curr = locations[i];
-      const distance = calculateDistanceBetweenPoints(
-        prev.latitude,
-        prev.longitude,
-        curr.latitude,
-        curr.longitude,
-      );
-      totalDistance += distance;
+      if (prev && curr) {
+        const distance = calculateDistanceBetweenPoints(
+          prev.latitude,
+          prev.longitude,
+          curr.latitude,
+          curr.longitude,
+        );
+        totalDistance += distance;
+      }
     }
 
     return totalDistance / 1000; // km
@@ -221,7 +225,7 @@ export const RunActivePresenter = ({
               </Button>
               <Button
                 onClick={onEndRun}
-                disabled={loading || confirmationText !== "終了"}
+                isDisabled={loading || confirmationText !== "終了"}
                 className="flex-1"
                 variant="destructive"
               >

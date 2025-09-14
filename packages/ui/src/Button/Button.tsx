@@ -8,7 +8,7 @@ import {
 import clsx from "clsx";
 
 export type ButtonProps = AriaButtonProps<"button"> & {
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "destructive" | "outline";
   size?: "sm" | "md" | "lg";
   className?: string;
   children?: ReactNode;
@@ -60,6 +60,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "hover:border-marathon-300",
       ],
       ghost: ["text-marathon-600", "hover:bg-marathon-50"],
+      destructive: [
+        "bg-red-600",
+        "text-white",
+        "hover:bg-red-700",
+        "active:bg-red-700",
+        "shadow-red",
+      ],
+      outline: [
+        "bg-white",
+        "text-gray-700",
+        "border",
+        "border-gray-200",
+        "hover:bg-gray-50",
+        "hover:border-gray-300",
+      ],
     } as const;
 
     const focusRing = ["focus-visible:ring-marathon-500"];
