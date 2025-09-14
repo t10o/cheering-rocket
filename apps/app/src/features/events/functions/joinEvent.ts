@@ -7,22 +7,19 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { firebaseApp } from "@/libs/firebase";
-
-export type EventLite = {
-  name: string;
-  plannedAt?: any;
-  note?: string;
-  ownerUid: string;
-  joinable?: boolean;
-};
+import {
+  isEventJoinable,
+  getEventJoinErrorMessage,
+  type EventLite,
+} from "./eventValidation";
 
 export const searchEvent = async (eventId: string) => {
   const db = getFirestore(firebaseApp);
   const eventDoc = await getDoc(doc(db, "events", eventId));
   const eventData = eventDoc.data() as EventLite | undefined;
 
-  if (!eventData || eventData.joinable === false) {
-    throw new Error("イベントが見つからないか、参加受付が無効になっています。");
+  if (!isEventJoinable(eventData)) {
+    throw new Error(getEventJoinErrorMessage(eventData));
   }
 
   return { id: eventDoc.id, data: eventData };

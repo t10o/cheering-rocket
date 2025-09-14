@@ -1,17 +1,19 @@
-name: Android Build and Deploy
+name: Test and Deploy Pipeline
 
-# mainブランチへのマージ時にトリガー（リリースブランチ）
+# mainブランチへのプッシュ時にトリガー
 on:
   push:
     branches: [main]
     paths:
       - "apps/app/**"
       - "packages/ui/**"
-      - ".github/workflows/android-build.yml"
+      - "packages/**"
+      - ".github/workflows/**"
   workflow_dispatch: # 手動実行を可能にする
 
 jobs:
-  build-android:
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -22,20 +24,73 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm check-types
+
+      - name: Lint check
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format --check
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Checks Performed:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ TypeScript type checking" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ ESLint code quality check" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Prettier format check" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Vitest unit tests" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build verification" >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Deploy to Firebase
+    runs-on: ubuntu-latest
+    needs: test # testジョブが成功した場合のみ実行
+    if: success() # testジョブが成功した場合のみ実行
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build UI package
         run: pnpm --filter @cheering/ui build
-        # UIパッケージをビルド（appの依存関係）
 
       - name: Build web app
         run: pnpm --filter app build
-        # Webアプリをビルドしてdistディレクトリに出力
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -63,7 +118,6 @@ jobs:
         run: |
           cd apps/app
           pnpm exec cap sync android
-        # ビルドされたWebアプリをAndroidプロジェクトにコピー
 
       - name: Build Android APK
         run: |
@@ -75,34 +129,29 @@ jobs:
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
-        if: github.ref == 'refs/heads/main'
         with:
           name: app-debug
           path: apps/app/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
       - name: Setup Firebase CLI
-        if: github.ref == 'refs/heads/main'
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase App Distribution
-        if: github.ref == 'refs/heads/main'
         run: |
           cd apps/app/android
-          # テスターグループ "runners" にAPKを配信
-          # テスターのメールアドレスはFirebase Consoleで管理
           firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} --groups "runners" --release-notes "Build from commit ${{ github.sha }} - ${{ github.event.head_commit.message }}"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
-      - name: Build Summary
+      - name: Deploy Summary
         if: always()
         run: |
-          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Deploy Results" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Trigger**: Main branch merge (Release)" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: Test success" >> $GITHUB_STEP_SUMMARY
           if [ "${{ job.status }}" = "success" ]; then
             echo "- **APK**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
             echo "- **Distribution**: Sent to Firebase App Distribution" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,65 @@
+name: Test and Quality Check
+
+# 全ブランチでプッシュ・プルリクエスト時にトリガー（mainブランチ除く）
+on:
+  push:
+    branches-ignore: [main] # mainブランチでは実行しない
+  pull_request:
+    # 全ブランチで実行
+  workflow_dispatch: # 手動実行を可能にする
+
+jobs:
+  test-and-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm check-types
+        # TypeScriptの型チェックを実行
+
+      - name: Lint check
+        run: pnpm lint
+        # ESLintによるコード品質チェック
+
+      - name: Format check
+        run: pnpm format --check
+        # Prettierによるフォーマットチェック
+
+      - name: Run tests
+        run: pnpm test
+        # Vitestによるテスト実行
+
+      - name: Build all packages
+        run: pnpm build
+        # 全パッケージのビルドテスト
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test and Quality Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Checks Performed:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ TypeScript type checking" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ ESLint code quality check" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Prettier format check" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Vitest unit tests" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build verification" >> $GITHUB_STEP_SUMMARY

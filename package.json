@@ -8,6 +8,7 @@
     "lint:fix": "turbo run lint:fix",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
+    "test": "turbo run test",
     "cap:sync": "pnpm -C apps/app exec cap sync",
     "cap:run:android": "pnpm -C apps/app exec cap run android",
     "cap:copy": "pnpm -C apps/app exec cap copy",
@@ -16,10 +17,14 @@
     "fb:deploy": "pnpm -C apps/firebase/functions run deploy"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "3.2.4",
+    "@vitest/ui": "^3.2.4",
     "eslint": "^9.34.0",
+    "jsdom": "^27.0.0",
     "prettier": "^3.6.2",
     "turbo": "^2.5.6",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18"

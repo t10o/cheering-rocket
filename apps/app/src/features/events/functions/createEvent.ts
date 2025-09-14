@@ -1,4 +1,3 @@
-import { getAuth } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -8,31 +7,30 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { firebaseApp } from "@/libs/firebase";
-
-export type CreateEventData = {
-  name: string;
-  date: string;
-  time: string;
-  note: string;
-};
+import {
+  validateEventData,
+  normalizeEventData,
+  toTimestamp,
+  CreateEventData,
+} from "./eventValidation";
 
 export const createEvent = async (data: CreateEventData, userUid: string) => {
   const db = getFirestore(firebaseApp);
 
-  if (!data.name.trim()) {
-    throw new Error("イベント名を入力してください");
-  }
-  if (!data.date) {
-    throw new Error("予定日を入力してください");
-  }
+  // バリデーション
+  validateEventData(data);
 
-  const plannedAt = toTimestamp(data.date, data.time);
+  // データ正規化
+  const normalizedData = normalizeEventData(data);
+  const plannedAt = new Date(
+    toTimestamp(normalizedData.date, normalizedData.time),
+  );
 
   // 1) イベント作成
   const eventRef = await addDoc(collection(db, "events"), {
-    name: data.name.trim(),
+    name: normalizedData.name,
     plannedAt,
-    note: data.note.trim(),
+    note: normalizedData.note,
     ownerUid: userUid,
     joinable: true,
     createdAt: serverTimestamp(),
@@ -49,9 +47,3 @@ export const createEvent = async (data: CreateEventData, userUid: string) => {
 
   return eventRef.id;
 };
-
-function toTimestamp(date: string, time?: string) {
-  // ローカル時刻のまま Timestamp に（必要ならTZ考慮ロジックを後で）
-  const t = time && time.length ? `${date}T${time}` : `${date}T00:00`;
-  return new Date(t);
-}
