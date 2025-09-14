@@ -9,7 +9,7 @@ describe("profileForm", () => {
       const setDirty = vi.fn();
       const newName = "New Name";
 
-      handleNameChange(newName, setFormData, setDirty);
+      handleNameChange(newName, setFormData);
 
       expect(setFormData).toHaveBeenCalledWith(expect.any(Function));
       expect(setDirty).toHaveBeenCalledWith(true);
@@ -29,7 +29,7 @@ describe("profileForm", () => {
         pendingPreviewURL: null,
       };
 
-      await handleSave(formData, mockSaveProfile, setDirty, setToast);
+      await handleSave(formData, mockSaveProfile, setDirty);
 
       expect(mockSaveProfile).toHaveBeenCalledWith(formData);
       expect(setDirty).toHaveBeenCalledWith(false);
@@ -48,7 +48,7 @@ describe("profileForm", () => {
         pendingPreviewURL: null,
       };
 
-      await handleSave(formData, mockSaveProfile, setDirty, setToast);
+      await handleSave(formData, mockSaveProfile, setDirty);
 
       expect(mockSaveProfile).toHaveBeenCalledWith(formData);
       expect(setDirty).not.toHaveBeenCalled();
@@ -67,7 +67,7 @@ describe("profileForm", () => {
         pendingPreviewURL: null,
       };
 
-      await handleSave(formData, mockSaveProfile, setDirty, setToast);
+      await handleSave(formData, mockSaveProfile, setDirty);
 
       expect(mockSaveProfile).not.toHaveBeenCalled();
       expect(setDirty).not.toHaveBeenCalled();

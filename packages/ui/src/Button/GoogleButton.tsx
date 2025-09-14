@@ -66,7 +66,6 @@ export const GoogleButton = forwardRef<HTMLButtonElement, GoogleButtonProps>(
         ref={domRef}
       >
         <span className={clsx(["-ml-0.5", "flex"])}>
-          {/* @ts-expect-error - FontAwesome React 19 compatibility issue */}
           <FontAwesomeIcon icon={faGoogle} />
         </span>
         <span>{props.children ?? "Google で続ける"}</span>
