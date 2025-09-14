@@ -1,11 +1,31 @@
-🚧 WIP
+# Cheering Rocket
 
-## Required Application
+マラソンランナーを応援するアプリです。
 
-XCode
-AndroidStudio
+## 開発環境セットアップ
 
-## install asdf
+### Required Application
+
+- XCode
+- Android Studio
+
+## CI/CD
+
+このプロジェクトでは、GitHub Actionsを使用してAndroid APKの自動ビルドとFirebase App Distributionへの配信を行います。
+
+### セットアップ
+
+詳細なセットアップ手順は [GitHub Actions セットアップガイド](docs/github-actions-setup.md) を参照してください。
+
+### 自動ビルド
+
+- **mainブランチへのpush**: 自動的にAPKがビルドされ、Firebase App Distributionに配信されます
+- **Pull Request**: ビルドテストが実行されます
+- **手動実行**: GitHub Actionsの画面から手動でワークフローを実行できます
+
+## 開発環境
+
+### install asdf
 
 ```
 export PATH="$PATH:$(npm prefix -g)/bin"

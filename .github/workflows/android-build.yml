@@ -1,0 +1,118 @@
+name: Android Build and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/app/**"
+      - "packages/**"
+      - ".github/workflows/android-build.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/app/**"
+      - "packages/**"
+      - ".github/workflows/android-build.yml"
+  workflow_dispatch: # 手動実行を可能にする
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web app
+        run: pnpm build
+        # Webアプリをビルドしてdistディレクトリに出力
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x apps/app/android/gradlew
+
+      - name: Sync Capacitor
+        run: |
+          cd apps/app
+          npx cap sync android
+        # ビルドされたWebアプリをAndroidプロジェクトにコピー
+
+      - name: Build Android APK
+        run: |
+          cd apps/app/android
+          ./gradlew assembleDebug
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          name: app-debug
+          path: apps/app/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Setup Firebase CLI
+        if: github.ref == 'refs/heads/main'
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase App Distribution
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd apps/app/android
+          # テスターグループ "testers" にAPKを配信
+          # テスターのメールアドレスはFirebase Consoleで管理
+          firebase appdistribution:distribute \
+            app/build/outputs/apk/debug/app-debug.apk \
+            --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+            --groups "runners" \
+            --release-notes "Build from commit ${{ github.sha }} - ${{ github.event.head_commit.message }}"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "- **APK**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+              echo "- **Distribution**: Sent to Firebase App Distribution" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
