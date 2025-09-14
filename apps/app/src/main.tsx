@@ -5,6 +5,8 @@ import { SafeArea } from "@capacitor-community/safe-area";
 import * as Sentry from "@sentry/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { captureException } from "./libs/sentry";
 import { AuthProvider } from "./providers/auth/AuthProvider";
 import { routeTree } from "./routeTree.gen";
 
@@ -39,6 +41,18 @@ Sentry.init({
   // Setting this option to true will send default PII data to Sentry.
   // For example, automatic IP address collection on events
   sendDefaultPii: true,
+  // 開発モードではSentryを無効化
+  enabled: !import.meta.env.DEV,
+  environment: import.meta.env.DEV ? "development" : "production",
+});
+
+// グローバルエラーハンドラーを設定
+window.addEventListener("error", (event) => {
+  captureException(event.error, "Global Error Handler");
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  captureException(event.reason, "Unhandled Promise Rejection");
 });
 
 const rootElement = document.getElementById("root")!;
@@ -46,8 +60,10 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>,
+    <ErrorBoundary>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ErrorBoundary>,
   );
 }

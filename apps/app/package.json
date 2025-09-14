@@ -31,7 +31,8 @@
     "heic2any": "^0.0.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-easy-crop": "^5.5.0"
+    "react-easy-crop": "^5.5.0",
+    "react-error-boundary": "^6.0.0"
   },
   "devDependencies": {
     "@capacitor-firebase/authentication": "^7.3.1",
