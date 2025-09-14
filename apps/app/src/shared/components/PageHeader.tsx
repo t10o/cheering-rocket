@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { AppBar } from "@cheering/ui";
 
 export type PageHeaderProps = {
-  title: string;
+  title: ReactNode;
   left?: ReactNode;
   right?: ReactNode;
   className?: string;

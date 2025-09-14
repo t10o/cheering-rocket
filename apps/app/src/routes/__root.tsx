@@ -16,7 +16,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { TabBar } from "@cheering/ui";
+import { TabBar, Skeleton } from "@cheering/ui";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
@@ -39,7 +39,23 @@ function RootComponent() {
 
   const publicPaths = ["/auth/signin"];
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading)
+    return (
+      <div className="min-h-dvh bg-gray-50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Skeleton
+            width="120px"
+            height="120px"
+            rounded="full"
+            className="mx-auto"
+          />
+          <div className="space-y-2">
+            <Skeleton width="200px" height="24px" className="mx-auto" />
+            <Skeleton width="150px" height="16px" className="mx-auto" />
+          </div>
+        </div>
+      </div>
+    );
 
   if (!user && !publicPaths.includes(location.pathname)) {
     return <Navigate to="/auth/signin" search={{ redirect: location.href }} />;

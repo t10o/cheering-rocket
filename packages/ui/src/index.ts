@@ -6,3 +6,4 @@ export * from "./LoadingSpinner";
 export * from "./EmptyState";
 export * from "./Toast";
 export * from "./TabBar";
+export * from "./Skeleton";

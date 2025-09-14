@@ -1,5 +1,6 @@
-import { EmptyState, LoadingSpinner } from "@cheering/ui";
+import { EmptyState } from "@cheering/ui";
 import { RunCardPresenter } from "./RunCardPresenter";
+import { RunsListSkeleton } from "./RunsListSkeleton";
 import {
   formatRunDate,
   formatRunPace,
@@ -19,14 +20,7 @@ export const RunsListPresenter = ({
   error,
 }: RunsListPresenterProps) => {
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">ランレコードを読み込み中...</p>
-        </div>
-      </div>
-    );
+    return <RunsListSkeleton />;
   }
 
   if (error) {

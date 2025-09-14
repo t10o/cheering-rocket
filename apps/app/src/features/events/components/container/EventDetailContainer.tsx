@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { EventDetailPresenter } from "../presenter/EventDetailPresenter";
+import { EventDetailSkeleton } from "../presenter/EventDetailSkeleton";
 import {
   fetchEventDetail,
   generateCheerUrl,
@@ -57,7 +58,7 @@ export const EventDetailContainer = ({
   };
 
   if (!event || loading) {
-    return <div className="p-4">Loading...</div>;
+    return <EventDetailSkeleton />;
   }
 
   const cheerUrl = generateCheerUrl(eventId);

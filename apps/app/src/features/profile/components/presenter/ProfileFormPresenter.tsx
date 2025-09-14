@@ -1,5 +1,6 @@
 import { Input, Button, Card, Toast } from "@cheering/ui";
 import { Avatar } from "./Avatar";
+import { ProfileFormSkeleton } from "./ProfileFormSkeleton";
 import type { ProfileFormData } from "../../types";
 
 export type ProfileFormPresenterProps = {
@@ -26,14 +27,7 @@ export const ProfileFormPresenter = ({
   onToastClose,
 }: ProfileFormPresenterProps) => {
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-marathon-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">読み込み中...</p>
-        </div>
-      </div>
-    );
+    return <ProfileFormSkeleton />;
   }
 
   return (

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Button, EmptyState, LoadingSpinner } from "@cheering/ui";
+import { Button, EmptyState } from "@cheering/ui";
 import { EventCardPresenter } from "./EventCardPresenter";
+import { EventsListSkeleton } from "./EventsListSkeleton";
 import { formatEventDate } from "../../functions/eventCard";
 import type { Event } from "../../types";
 
@@ -16,14 +17,7 @@ export const EventsListPresenter = ({
   error,
 }: EventsListPresenterProps) => {
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">イベントを読み込み中...</p>
-        </div>
-      </div>
-    );
+    return <EventsListSkeleton />;
   }
 
   if (error) {

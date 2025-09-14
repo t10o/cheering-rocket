@@ -1,6 +1,7 @@
 import { PageHeader } from "@/shared/components/PageHeader";
 import { BackButton } from "@/shared/components/BackButton";
 import { Button, Input } from "@cheering/ui";
+import { JoinEventSkeleton } from "./JoinEventSkeleton";
 import { type EventLite } from "../../functions/joinEvent";
 
 export type JoinEventPresenterProps = {
@@ -30,18 +31,22 @@ export const JoinEventPresenter = ({
     <div className="min-h-dvh bg-gray-50">
       <PageHeader title="イベントIDで参加" left={<BackButton />} />
       <div className="p-4 space-y-4">
-        <div className="flex gap-2">
-          <Input
-            className="flex-1"
-            placeholder="イベントIDを入力"
-            value={eventId}
-            onChange={onEventIdChange}
-            onKeyDown={(e) => e.key === "Enter" && onSearch()}
-          />
-          <Button variant="secondary" onClick={onSearch} isDisabled={loading}>
-            検索
-          </Button>
-        </div>
+        {loading ? (
+          <JoinEventSkeleton />
+        ) : (
+          <div className="flex gap-2">
+            <Input
+              className="flex-1"
+              placeholder="イベントIDを入力"
+              value={eventId}
+              onChange={onEventIdChange}
+              onKeyDown={(e) => e.key === "Enter" && onSearch()}
+            />
+            <Button variant="secondary" onClick={onSearch} isDisabled={loading}>
+              検索
+            </Button>
+          </div>
+        )}
 
         {error && <div className="text-sm text-red-600">{error}</div>}
 
