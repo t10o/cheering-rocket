@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import * as Sentry from "@sentry/react";
+import { useNavigate } from "@tanstack/react-router";
 
 import {
   copyToClipboard,
-  type Event,
   fetchEventDetail,
   generateCheerUrl,
   isHeicImage,
   type MemberView,
 } from "../../functions/eventDetail";
+import { type Event } from "../../types";
 import { EventDetailPresenter } from "../presenter/EventDetailPresenter";
 import { EventDetailSkeleton } from "../presenter/EventDetailSkeleton";
+
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export type EventDetailContainerProps = {
   eventId: string;
@@ -19,6 +22,8 @@ export type EventDetailContainerProps = {
 export const EventDetailContainer = ({
   eventId,
 }: EventDetailContainerProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
   const [members, setMembers] = useState<MemberView[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,6 +66,10 @@ export const EventDetailContainer = ({
     }
   };
 
+  const handleEditEvent = () => {
+    navigate({ to: "/events/$eventId/edit", params: { eventId } });
+  };
+
   if (!event || loading) {
     return <EventDetailSkeleton />;
   }
@@ -75,7 +84,9 @@ export const EventDetailContainer = ({
       cheerUrl={cheerUrl}
       onCopyEventId={handleCopyEventId}
       onCopyCheerUrl={handleCopyCheerUrl}
+      onEditEvent={handleEditEvent}
       isHeicImage={isHeicImage}
+      currentUserUid={user?.uid}
     />
   );
 };

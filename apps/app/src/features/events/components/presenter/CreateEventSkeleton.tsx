@@ -1,5 +1,7 @@
 import { Skeleton } from "@cheering/ui";
 
+import { Field } from "@/shared/components/Field";
+
 export const CreateEventSkeleton = () => {
   return (
     <div className="p-4 space-y-6">
@@ -24,18 +26,3 @@ export const CreateEventSkeleton = () => {
     </div>
   );
 };
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-2">
-      <div className="text-sm text-gray-600">{label}</div>
-      {children}
-    </label>
-  );
-}

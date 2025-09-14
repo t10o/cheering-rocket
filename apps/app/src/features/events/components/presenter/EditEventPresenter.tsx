@@ -1,15 +1,15 @@
 import { Button, Input } from "@cheering/ui";
 
-import { type CreateEventData } from "../../functions/createEvent";
+import { type UpdateEventData } from "../../functions/updateEvent";
 
-import { CreateEventSkeleton } from "./CreateEventSkeleton";
+import { EditEventSkeleton } from "./EditEventSkeleton";
 
 import { BackButton } from "@/shared/components/BackButton";
 import { Field } from "@/shared/components/Field";
 import { PageHeader } from "@/shared/components/PageHeader";
 
-export type CreateEventPresenterProps = {
-  formData: CreateEventData;
+export type EditEventPresenterProps = {
+  formData: UpdateEventData;
   onNameChange: (value: string) => void;
   onDateChange: (value: string) => void;
   onTimeChange: (value: string) => void;
@@ -19,7 +19,7 @@ export type CreateEventPresenterProps = {
   error: string | null;
 };
 
-export const CreateEventPresenter = ({
+export const EditEventPresenter = ({
   formData,
   onNameChange,
   onDateChange,
@@ -28,12 +28,12 @@ export const CreateEventPresenter = ({
   onSubmit,
   saving,
   error,
-}: CreateEventPresenterProps) => {
+}: EditEventPresenterProps) => {
   return (
     <div className="min-h-dvh bg-gray-50">
-      <PageHeader title="イベント作成" left={<BackButton />} />
+      <PageHeader title="イベント編集" left={<BackButton />} />
       {saving ? (
-        <CreateEventSkeleton />
+        <EditEventSkeleton />
       ) : (
         <div className="p-4 space-y-6">
           <Field label="イベント名">
@@ -73,7 +73,7 @@ export const CreateEventPresenter = ({
 
           <div className="flex justify-end">
             <Button onClick={onSubmit} isDisabled={saving}>
-              {saving ? "作成中..." : "作成する"}
+              {saving ? "更新中..." : "更新する"}
             </Button>
           </div>
         </div>

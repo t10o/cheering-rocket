@@ -19,6 +19,14 @@ vi.mock("firebase/firestore", () => ({
   setDoc: vi.fn(),
   serverTimestamp: vi.fn(),
   onSnapshot: vi.fn(),
+  Timestamp: {
+    now: vi.fn(() => ({
+      toDate: () => new Date(),
+    })),
+    fromDate: vi.fn((date: Date) => ({
+      toDate: () => date,
+    })),
+  },
 }));
 
 vi.mock("firebase/auth", () => ({

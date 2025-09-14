@@ -7,19 +7,12 @@ import {
   getDocs,
   getFirestore,
   query,
-  type Timestamp,
   where,
 } from "firebase/firestore";
 
-import { firebaseApp } from "@/libs/firebase";
+import { type Event } from "../types";
 
-export type Event = {
-  name: string;
-  plannedAt?: Date | Timestamp;
-  note?: string;
-  ownerUid: string;
-  joinable?: boolean;
-};
+import { firebaseApp } from "@/libs/firebase";
 
 export type MemberView = {
   uid: string;
@@ -33,7 +26,7 @@ export const fetchEventDetail = async (eventId: string) => {
 
   // イベント本体
   const eventDoc = await getDoc(doc(db, "events", eventId));
-  const eventData = eventDoc.data() as Event | undefined;
+  const eventData = eventDoc.data() as Omit<Event, "id"> | undefined;
   if (!eventData) throw new Error("イベントが存在しません");
 
   // メンバー一覧
@@ -83,7 +76,10 @@ export const fetchEventDetail = async (eventId: string) => {
   });
 
   return {
-    event: eventData,
+    event: {
+      ...eventData,
+      id: eventId,
+    },
     members: membersWithUserData,
   };
 };

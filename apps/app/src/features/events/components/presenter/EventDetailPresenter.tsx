@@ -1,6 +1,8 @@
 import { Button } from "@cheering/ui";
 
-import { type Event, type MemberView } from "../../functions/eventDetail";
+import { type MemberView } from "../../functions/eventDetail";
+import { canEditEvent } from "../../functions/eventPermissions";
+import { type Event } from "../../types";
 
 import { BackButton } from "@/shared/components/BackButton";
 import { PageHeader } from "@/shared/components/PageHeader";
@@ -12,7 +14,9 @@ export type EventDetailPresenterProps = {
   cheerUrl: string;
   onCopyEventId: () => void;
   onCopyCheerUrl: () => void;
+  onEditEvent: () => void;
   isHeicImage: (url: string) => boolean;
+  currentUserUid: string | undefined;
 };
 
 export const EventDetailPresenter = ({
@@ -22,16 +26,29 @@ export const EventDetailPresenter = ({
   cheerUrl,
   onCopyEventId,
   onCopyCheerUrl,
+  onEditEvent,
   isHeicImage,
+  currentUserUid,
 }: EventDetailPresenterProps) => {
+  const canEdit = currentUserUid ? canEditEvent(event, currentUserUid) : false;
   return (
     <div className="min-h-dvh bg-gradient-to-br from-gray-50 to-gray-100">
       <PageHeader title={event.name ?? "イベント"} left={<BackButton />} />
       <div className="p-4 space-y-6">
         {/* 概要セクション */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900">概要</h2>
+            {canEdit && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={onEditEvent}
+                className="shrink-0"
+              >
+                編集
+              </Button>
+            )}
           </div>
           <div className="p-6 space-y-4">
             <InfoRow icon="🏃‍♂️" label="イベント名" value={event.name} />

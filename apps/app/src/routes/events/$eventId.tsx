@@ -1,12 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-import { EventDetailContainer } from "@/features/events/components/container/EventDetailContainer";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/events/$eventId")({
-  component: EventDetail,
+  component: EventDetailLayout,
 });
 
-function EventDetail() {
-  const { eventId } = Route.useParams();
-  return <EventDetailContainer eventId={eventId} />;
+function EventDetailLayout() {
+  return <Outlet />;
 }
