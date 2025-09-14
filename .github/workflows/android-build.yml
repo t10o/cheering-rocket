@@ -63,7 +63,7 @@ jobs:
       - name: Sync Capacitor
         run: |
           cd apps/app
-          pnpm dlx cap sync android
+          pnpm exec cap sync android
         # ビルドされたWebアプリをAndroidプロジェクトにコピー
 
       - name: Build Android APK
