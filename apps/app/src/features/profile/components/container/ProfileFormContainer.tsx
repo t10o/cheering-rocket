@@ -32,8 +32,8 @@ export const ProfileFormContainer = () => {
     }
   }, [profile]);
 
-  const onFileSelect = (file: File) => {
-    handleFileSelect(file, setFormData);
+  const onFileSelect = async (file: File) => {
+    await handleFileSelect(file, setFormData);
     setDirty(true);
   };
 

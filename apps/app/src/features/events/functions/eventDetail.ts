@@ -22,6 +22,7 @@ export type MemberView = {
   uid: string;
   role: string;
   name?: string;
+  photoUrl?: string | undefined;
 };
 
 export const fetchEventDetail = async (eventId: string) => {
@@ -41,9 +42,9 @@ export const fetchEventDetail = async (eventId: string) => {
     role: (d.data() as any)?.role ?? "member",
   }));
 
-  // users から名前をまとめ取得（最大10件ずつ）
+  // users から名前と写真URLをまとめ取得（最大10件ずつ）
   const uids = baseMembers.map((m) => m.uid);
-  const nameMap = new Map<string, string | undefined>();
+  const userDataMap = new Map<string, { name?: string; photoUrl?: string }>();
   for (let i = 0; i < uids.length; i += 10) {
     const chunk = uids.slice(i, i + 10);
     const userQuery = query(
@@ -51,19 +52,27 @@ export const fetchEventDetail = async (eventId: string) => {
       where(documentId(), "in", chunk),
     );
     const userSnapshot = await getDocs(userQuery);
-    userSnapshot.docs.forEach((u) =>
-      nameMap.set(u.id, (u.data() as any)?.name ?? ""),
-    );
+    userSnapshot.docs.forEach((u) => {
+      const userData = u.data() as any;
+      userDataMap.set(u.id, {
+        name: userData?.name ?? "",
+        photoUrl: userData?.photoURL, // Firebaseでは photoURL (大文字)
+      });
+    });
   }
 
-  const membersWithNames = baseMembers.map((m) => ({
-    ...m,
-    name: nameMap.get(m.uid) || "",
-  }));
+  const membersWithUserData = baseMembers.map((m) => {
+    const userData = userDataMap.get(m.uid) || {};
+    return {
+      ...m,
+      name: userData.name || "",
+      photoUrl: userData.photoUrl,
+    };
+  });
 
   // 役割順でソート
   const roleOrder = { owner: 0, admin: 1, member: 2 } as Record<string, number>;
-  membersWithNames.sort((a, b) => {
+  membersWithUserData.sort((a, b) => {
     const orderA = roleOrder[a.role] ?? 99;
     const orderB = roleOrder[b.role] ?? 99;
     if (orderA !== orderB) return orderA - orderB;
@@ -72,7 +81,7 @@ export const fetchEventDetail = async (eventId: string) => {
 
   return {
     event: eventData,
-    members: membersWithNames,
+    members: membersWithUserData,
   };
 };
 
@@ -82,4 +91,29 @@ export const generateCheerUrl = (eventId: string) => {
 
 export const copyToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
+};
+
+// HEIC画像かどうかを判定する関数
+export const isHeicImage = (url: string): boolean => {
+  const lowerUrl = url.toLowerCase();
+  // URLに拡張子が含まれている場合
+  if (lowerUrl.includes(".heic") || lowerUrl.includes(".heif")) {
+    return true;
+  }
+
+  // Firebase StorageのURLで、contentTypeがHEICの場合
+  if (lowerUrl.includes("firebasestorage.googleapis.com")) {
+    // URLパラメータからcontentTypeを確認
+    try {
+      const urlObj = new URL(url);
+      const contentType = urlObj.searchParams.get("contentType");
+      if (contentType && contentType.toLowerCase().includes("heic")) {
+        return true;
+      }
+    } catch (e) {
+      // URL解析エラーの場合は拡張子のみで判定
+    }
+  }
+
+  return false;
 };

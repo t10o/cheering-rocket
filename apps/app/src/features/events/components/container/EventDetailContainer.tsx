@@ -5,6 +5,7 @@ import {
   fetchEventDetail,
   generateCheerUrl,
   copyToClipboard,
+  isHeicImage,
   type Event,
   type MemberView,
 } from "../../functions/eventDetail";
@@ -73,6 +74,7 @@ export const EventDetailContainer = ({
       isOwner={isOwner}
       onCopyEventId={handleCopyEventId}
       onCopyCheerUrl={handleCopyCheerUrl}
+      isHeicImage={isHeicImage}
     />
   );
 };

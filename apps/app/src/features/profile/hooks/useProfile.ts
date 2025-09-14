@@ -16,6 +16,7 @@ import {
 } from "firebase/storage";
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
 import type { UserProfile, ProfileFormData } from "../types";
 
 export const useProfile = () => {
@@ -59,14 +60,17 @@ export const useProfile = () => {
 
       // 画像が選ばれていればアップロード
       if (formData.pendingAvatarFile) {
-        const ext = (
-          formData.pendingAvatarFile.name.split(".").pop() || ""
-        ).toLowerCase();
+        // HEIC画像の場合はJPEGに変換
+        const convertedFile = await convertImageIfNeeded(
+          formData.pendingAvatarFile,
+        );
+
+        const ext = (convertedFile.name.split(".").pop() || "").toLowerCase();
         const safeExt = ext && ext.length <= 5 ? ext : "jpg";
         const path = `users/${user.uid}/avatar_${Date.now()}.${safeExt}`;
         const ref = storageRef(storage, path);
-        await uploadBytes(ref, formData.pendingAvatarFile, {
-          contentType: formData.pendingAvatarFile.type || "image/jpeg",
+        await uploadBytes(ref, convertedFile, {
+          contentType: convertedFile.type || "image/jpeg",
         });
         newPhotoURL = await getDownloadURL(ref);
       }

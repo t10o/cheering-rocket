@@ -58,6 +58,9 @@ export const ProfileFormPresenter = ({
                   if (file) onFileSelect(file);
                 }}
               />
+              <p className="text-xs text-gray-500">
+                HEIC形式の画像は自動的にJPEGに変換されます
+              </p>
             </div>
           </div>
         </Card>

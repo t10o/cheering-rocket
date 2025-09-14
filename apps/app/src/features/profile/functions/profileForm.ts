@@ -1,6 +1,7 @@
 import type { ProfileFormData } from "../types";
+import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
 
-export const handleFileSelect = (
+export const handleFileSelect = async (
   file: File,
   setFormData: React.Dispatch<React.SetStateAction<ProfileFormData>>,
 ) => {
@@ -9,14 +10,29 @@ export const handleFileSelect = (
     if (prev.pendingPreviewURL) {
       URL.revokeObjectURL(prev.pendingPreviewURL);
     }
+    return prev;
+  });
 
+  try {
+    // HEIC画像の場合はJPEGに変換
+    const convertedFile = await convertImageIfNeeded(file);
+
+    const preview = URL.createObjectURL(convertedFile);
+    setFormData((prev) => ({
+      ...prev,
+      pendingAvatarFile: convertedFile,
+      pendingPreviewURL: preview,
+    }));
+  } catch (error) {
+    console.error("画像変換に失敗しました:", error);
+    // 変換に失敗した場合は元のファイルを使用
     const preview = URL.createObjectURL(file);
-    return {
+    setFormData((prev) => ({
       ...prev,
       pendingAvatarFile: file,
       pendingPreviewURL: preview,
-    };
-  });
+    }));
+  }
 };
 
 export const handleNameChange = (

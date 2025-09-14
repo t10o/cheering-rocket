@@ -41,6 +41,9 @@ importers:
       firebase:
         specifier: ^12.2.1
         version: 12.2.1
+      heic2any:
+        specifier: ^0.0.4
+        version: 0.0.4
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -3771,6 +3774,9 @@ packages:
   heap-js@2.6.0:
     resolution: {integrity: sha512-trFMIq3PATiFRiQmNNeHtsrkwYRByIXUbYNbotiY9RLVfMkdwZdd2eQ38mGt7BRiCKBaj1DyBAIHmm7mmXPuuw==}
     engines: {node: '>=10.0.0'}
+
+  heic2any@0.0.4:
+    resolution: {integrity: sha512-3lLnZiDELfabVH87htnRolZ2iehX9zwpRyGNz22GKXIu0fznlblf0/ftppXKNqS26dqFSeqfIBhAmAj/uSp0cA==}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -10497,6 +10503,8 @@ snapshots:
       function-bind: 1.1.2
 
   heap-js@2.6.0: {}
+
+  heic2any@0.0.4: {}
 
   highlight.js@10.7.3: {}
 
