@@ -90,10 +90,9 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd apps/app/android
-          # テスターグループ "testers" にAPKを配信
+          # テスターグループ "runners" にAPKを配信
           # テスターのメールアドレスはFirebase Consoleで管理
-          firebase appdistribution:distribute \
-            app/build/outputs/apk/debug/app-debug.apk \
+          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
             --groups "runners" \
             --release-notes "Build from commit ${{ github.sha }} - ${{ github.event.head_commit.message }}"
