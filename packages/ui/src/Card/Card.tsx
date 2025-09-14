@@ -53,6 +53,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
       ]
     : [];
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (onClick && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       ref={ref}
@@ -64,6 +71,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
         className,
       )}
       onClick={onClick}
+      onKeyDown={onClick ? handleKeyDown : undefined}
       role={role}
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedBy}

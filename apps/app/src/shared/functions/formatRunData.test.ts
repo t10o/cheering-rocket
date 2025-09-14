@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { formatPace, formatDistance, formatDuration } from "./formatRunData";
+import { describe, expect,it } from "vitest";
+
+import { formatDistance, formatDuration,formatPace } from "./formatRunData";
 
 describe("formatRunData", () => {
   describe("formatPace", () => {

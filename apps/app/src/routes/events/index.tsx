@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/shared/components/PageHeader";
+
 import { Button } from "@cheering/ui";
+
 import { EventsListContainer } from "@/features/events/components/container/EventsListContainer";
+import { PageHeader } from "@/shared/components/PageHeader";
 
 export const Route = createFileRoute("/events/")({
   component: EventsIndex,

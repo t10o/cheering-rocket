@@ -1,7 +1,9 @@
-import { Input, Button, Card, Toast } from "@cheering/ui";
+import { Button, Card, Input, Toast } from "@cheering/ui";
+
+import type { ProfileFormData } from "../../types";
+
 import { Avatar } from "./Avatar";
 import { ProfileFormSkeleton } from "./ProfileFormSkeleton";
-import type { ProfileFormData } from "../../types";
 
 export type ProfileFormPresenterProps = {
   formData: ProfileFormData;

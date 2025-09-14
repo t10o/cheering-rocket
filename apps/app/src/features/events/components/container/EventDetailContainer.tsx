@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { EventDetailPresenter } from "../presenter/EventDetailPresenter";
-import { EventDetailSkeleton } from "../presenter/EventDetailSkeleton";
+
 import {
+  copyToClipboard,
+  type Event,
   fetchEventDetail,
   generateCheerUrl,
-  copyToClipboard,
   isHeicImage,
-  type Event,
   type MemberView,
 } from "../../functions/eventDetail";
+import { EventDetailPresenter } from "../presenter/EventDetailPresenter";
+import { EventDetailSkeleton } from "../presenter/EventDetailSkeleton";
+
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export type EventDetailContainerProps = {

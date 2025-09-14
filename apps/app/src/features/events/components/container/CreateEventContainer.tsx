@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { CreateEventPresenter } from "../presenter/CreateEventPresenter";
+
 import { createEvent, type CreateEventData } from "../../functions/createEvent";
+import { CreateEventPresenter } from "../presenter/CreateEventPresenter";
+
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export const CreateEventContainer = () => {
@@ -25,8 +27,8 @@ export const CreateEventContainer = () => {
       const eventId = await createEvent(formData, user.uid);
       // 完了 → 詳細へ
       navigate({ to: "/events/$eventId", params: { eventId } });
-    } catch (e: any) {
-      setError(e?.message ?? "作成に失敗しました");
+    } catch (e: unknown) {
+      setError((e as Error)?.message ?? "作成に失敗しました");
     } finally {
       setSaving(false);
     }

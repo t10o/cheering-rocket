@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { formatRunDate, formatRunPace, formatRunDuration } from "./runCard";
+import { describe, expect,it } from "vitest";
+
+import { formatRunDate, formatRunDuration,formatRunPace } from "./runCard";
 
 describe("runCard", () => {
   describe("formatRunDate", () => {

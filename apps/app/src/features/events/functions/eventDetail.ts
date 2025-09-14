@@ -1,13 +1,14 @@
 import {
   collection,
   doc,
+  documentId,
   getDoc,
   getDocs,
   getFirestore,
   query,
   where,
-  documentId,
 } from "firebase/firestore";
+
 import { firebaseApp } from "@/libs/firebase";
 
 export type Event = {
@@ -110,7 +111,7 @@ export const isHeicImage = (url: string): boolean => {
       if (contentType && contentType.toLowerCase().includes("heic")) {
         return true;
       }
-    } catch (e) {
+    } catch (_e) {
       // URL解析エラーの場合は拡張子のみで判定
     }
   }

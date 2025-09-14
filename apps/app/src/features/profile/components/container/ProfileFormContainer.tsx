@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
-import { ProfileFormPresenter } from "../presenter/ProfileFormPresenter";
-import { useProfile } from "../../hooks/useProfile";
+import { useEffect, useState } from "react";
+
 import {
   handleFileSelect,
   handleNameChange,
   handleSave,
 } from "../../functions/profileForm";
+import { useProfile } from "../../hooks/useProfile";
 import type { ProfileFormData } from "../../types";
+import { ProfileFormPresenter } from "../presenter/ProfileFormPresenter";
 
 export const ProfileFormContainer = () => {
   const { profile, loading, saving, error, saveProfile } = useProfile();
@@ -16,7 +17,7 @@ export const ProfileFormContainer = () => {
     pendingAvatarFile: null,
     pendingPreviewURL: null,
   });
-  const [dirty, setDirty] = useState(false);
+  const [_dirty, setDirty] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   // プロフィールデータが読み込まれたらフォームに反映

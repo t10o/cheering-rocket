@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { isHeicImage, generateCheerUrl, copyToClipboard } from "./eventDetail";
+import { describe, expect, it, vi } from "vitest";
+
+import { copyToClipboard,generateCheerUrl, isHeicImage } from "./eventDetail";
 
 describe("eventDetail", () => {
   describe("isHeicImage", () => {

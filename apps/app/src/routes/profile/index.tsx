@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader } from "@/shared/components/PageHeader";
+
 import { ProfileFormContainer } from "@/features/profile/components/container/ProfileFormContainer";
+import { PageHeader } from "@/shared/components/PageHeader";
 
 export const Route = createFileRoute("/profile/")({
   component: ProfilePage,

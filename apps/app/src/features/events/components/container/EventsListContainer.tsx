@@ -1,5 +1,5 @@
-import { EventsListPresenter } from "../presenter/EventsListPresenter";
 import { useEvents } from "../../hooks/useEvents";
+import { EventsListPresenter } from "../presenter/EventsListPresenter";
 
 export const EventsListContainer = () => {
   const { events, loading, error } = useEvents();

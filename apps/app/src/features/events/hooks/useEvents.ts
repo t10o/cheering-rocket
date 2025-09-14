@@ -1,13 +1,14 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo,useState } from "react";
 import {
   collectionGroup,
-  getDocs,
+  DocumentReference,
   getDoc,
+  getDocs,
   getFirestore,
   query,
   where,
-  DocumentReference,
 } from "firebase/firestore";
+
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
 import type { Event } from "../types";

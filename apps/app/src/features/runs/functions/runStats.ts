@@ -1,4 +1,4 @@
-import { formatPace, formatDistance } from "@/shared/functions/formatRunData";
+import { formatDistance,formatPace } from "@/shared/functions/formatRunData";
 
 export const formatStatsPace = (pace: number): string => {
   return formatPace(pace);

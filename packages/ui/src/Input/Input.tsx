@@ -1,9 +1,8 @@
 import { forwardRef, type ReactNode } from "react";
 import {
   type AriaTextFieldProps,
-  mergeProps,
-  useTextField,
   useObjectRef,
+  useTextField,
 } from "react-aria";
 import clsx from "clsx";
 
@@ -126,7 +125,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           </div>
         )}
         <input
-          {...(inputProps as any)}
+          {...inputProps}
           onChange={(e) => {
             // react-ariaのonChangeと独自のonChangeの両方を呼び出す
             if (inputProps.onChange) {

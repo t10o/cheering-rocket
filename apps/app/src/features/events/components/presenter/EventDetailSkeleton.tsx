@@ -1,6 +1,7 @@
-import { PageHeader } from "@/shared/components/PageHeader";
-import { BackButton } from "@/shared/components/BackButton";
 import { Skeleton } from "@cheering/ui";
+
+import { BackButton } from "@/shared/components/BackButton";
+import { PageHeader } from "@/shared/components/PageHeader";
 
 export const EventDetailSkeleton = () => {
   return (

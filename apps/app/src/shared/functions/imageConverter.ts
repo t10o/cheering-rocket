@@ -1,9 +1,10 @@
 import heic2any from "heic2any";
+
 import {
-  isHeicFile,
   changeHeicExtensionToJpg,
-  isValidConversionResult,
   getFirstBlob,
+  isHeicFile,
+  isValidConversionResult,
 } from "./imageValidation";
 
 /**

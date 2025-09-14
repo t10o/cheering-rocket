@@ -1,6 +1,6 @@
-import { EventCardPresenter } from "../presenter/EventCardPresenter";
 import { formatEventDate } from "../../functions/eventCard";
 import type { Event } from "../../types";
+import { EventCardPresenter } from "../presenter/EventCardPresenter";
 
 export type EventCardContainerProps = {
   event: Event;

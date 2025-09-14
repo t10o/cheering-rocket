@@ -14,10 +14,12 @@ import {
   ref as storageRef,
   uploadBytes,
 } from "firebase/storage";
+
 import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
+import type { ProfileFormData,UserProfile } from "../types";
+
 import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
-import type { UserProfile, ProfileFormData } from "../types";
 
 export const useProfile = () => {
   const { user } = useAuth();

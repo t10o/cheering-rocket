@@ -1,6 +1,6 @@
-import { RunStatsPresenter } from "../presenter/RunStatsPresenter";
-import { formatStatsPace, formatStatsDistance } from "../../functions/runStats";
+import { formatStatsDistance,formatStatsPace } from "../../functions/runStats";
 import type { RunStats as RunStatsType } from "../../types";
+import { RunStatsPresenter } from "../presenter/RunStatsPresenter";
 
 export type RunStatsContainerProps = {
   stats: RunStatsType;

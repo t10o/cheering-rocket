@@ -1,10 +1,10 @@
-import { RunCardPresenter } from "../presenter/RunCardPresenter";
 import {
   formatRunDate,
-  formatRunPace,
   formatRunDuration,
+  formatRunPace,
 } from "../../functions/runCard";
 import type { Run } from "../../types";
+import { RunCardPresenter } from "../presenter/RunCardPresenter";
 
 export type RunCardContainerProps = {
   run: Run;

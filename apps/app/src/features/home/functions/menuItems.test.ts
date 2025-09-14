@@ -1,10 +1,11 @@
-import { describe, it, expect } from "vitest";
-import { getMenuItems } from "./menuItems";
 import {
   faPersonRunning,
   faUser,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import { describe, expect,it } from "vitest";
+
+import { getMenuItems } from "./menuItems";
 
 describe("menuItems", () => {
   describe("getMenuItems", () => {

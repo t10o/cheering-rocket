@@ -1,5 +1,6 @@
-import { MenuCard } from "@/shared/components/MenuCard";
 import { type MenuItem } from "../../functions/menuItems";
+
+import { MenuCard } from "@/shared/components/MenuCard";
 
 export type HomePagePresenterProps = {
   menuItems: MenuItem[];

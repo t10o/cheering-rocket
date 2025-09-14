@@ -1,4 +1,5 @@
 import { Card } from "@cheering/ui";
+
 import type { RunStats as RunStatsType } from "../../types";
 
 export type RunStatsPresenterProps = {

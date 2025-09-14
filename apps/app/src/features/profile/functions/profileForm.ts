@@ -1,4 +1,5 @@
 import type { ProfileFormData } from "../types";
+
 import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
 
 export const handleFileSelect = async (

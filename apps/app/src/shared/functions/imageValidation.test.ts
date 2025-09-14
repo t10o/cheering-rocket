@@ -1,9 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect,it } from "vitest";
+
 import {
-  isHeicFile,
   changeHeicExtensionToJpg,
-  isValidConversionResult,
   getFirstBlob,
+  isHeicFile,
+  isValidConversionResult,
 } from "./imageValidation";
 
 describe("imageValidation", () => {

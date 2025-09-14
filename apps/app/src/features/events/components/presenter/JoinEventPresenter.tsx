@@ -1,8 +1,11 @@
-import { PageHeader } from "@/shared/components/PageHeader";
-import { BackButton } from "@/shared/components/BackButton";
 import { Button, Input } from "@cheering/ui";
-import { JoinEventSkeleton } from "./JoinEventSkeleton";
+
 import { type EventLite } from "../../functions/joinEvent";
+
+import { JoinEventSkeleton } from "./JoinEventSkeleton";
+
+import { BackButton } from "@/shared/components/BackButton";
+import { PageHeader } from "@/shared/components/PageHeader";
 
 export type JoinEventPresenterProps = {
   eventId: string;

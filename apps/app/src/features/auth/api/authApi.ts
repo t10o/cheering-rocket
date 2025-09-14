@@ -1,9 +1,10 @@
 import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut as firebaseSignOut,
   getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut,
 } from "firebase/auth";
+
 import { firebaseApp } from "../../../libs/firebase";
 
 const auth = getAuth(firebaseApp);

@@ -1,5 +1,6 @@
-import { vi } from "vitest";
 import "@testing-library/jest-dom";
+
+import { vi } from "vitest";
 
 // Mock navigator.clipboard
 Object.assign(navigator, {

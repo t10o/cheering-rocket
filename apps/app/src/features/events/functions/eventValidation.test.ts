@@ -1,12 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect,it } from "vitest";
+
 import {
-  validateEventData,
-  normalizeEventData,
-  toTimestamp,
-  isEventJoinable,
-  getEventJoinErrorMessage,
   type CreateEventData,
   type EventLite,
+  getEventJoinErrorMessage,
+  isEventJoinable,
+  normalizeEventData,
+  toTimestamp,
+  validateEventData,
 } from "./eventValidation";
 
 describe("eventValidation", () => {

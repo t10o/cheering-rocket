@@ -10,13 +10,12 @@ import {
   Link,
   Navigate,
   Outlet,
-  useLocation,
   useRouter,
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import { TabBar, Skeleton } from "@cheering/ui";
+import { Skeleton,TabBar } from "@cheering/ui";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 

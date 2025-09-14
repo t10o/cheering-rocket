@@ -6,13 +6,15 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { firebaseApp } from "@/libs/firebase";
+
 import {
-  validateEventData,
+  type CreateEventData,
   normalizeEventData,
   toTimestamp,
-  type CreateEventData,
+  validateEventData,
 } from "./eventValidation";
+
+import { firebaseApp } from "@/libs/firebase";
 
 export const createEvent = async (data: CreateEventData, userUid: string) => {
   const db = getFirestore(firebaseApp);

@@ -1,2 +1,2 @@
+export type { TabBarProps,TabItem } from "./TabBar";
 export { TabBar } from "./TabBar";
-export type { TabItem, TabBarProps } from "./TabBar";

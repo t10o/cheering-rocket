@@ -1,7 +1,9 @@
-import { PageHeader } from "@/shared/components/PageHeader";
-import { BackButton } from "@/shared/components/BackButton";
 import { Button } from "@cheering/ui";
+
 import { type Event, type MemberView } from "../../functions/eventDetail";
+
+import { BackButton } from "@/shared/components/BackButton";
+import { PageHeader } from "@/shared/components/PageHeader";
 
 export type EventDetailPresenterProps = {
   event: Event;
@@ -19,7 +21,7 @@ export const EventDetailPresenter = ({
   members,
   eventId,
   cheerUrl,
-  isOwner,
+  isOwner: _isOwner,
   onCopyEventId,
   onCopyCheerUrl,
   isHeicImage,

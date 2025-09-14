@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { JoinEventPresenter } from "../presenter/JoinEventPresenter";
+
 import {
-  searchEvent,
-  joinEvent,
   type EventLite,
+  joinEvent,
+  searchEvent,
 } from "../../functions/joinEvent";
+import { JoinEventPresenter } from "../presenter/JoinEventPresenter";
+
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export const JoinEventContainer = () => {
@@ -27,8 +29,8 @@ export const JoinEventContainer = () => {
     try {
       const result = await searchEvent(id);
       setHit({ id: result.id, data: result.data! });
-    } catch (e: any) {
-      setError(e.message || "取得に失敗しました");
+    } catch (e: unknown) {
+      setError((e as Error).message || "取得に失敗しました");
     } finally {
       setLoading(false);
     }
@@ -43,8 +45,8 @@ export const JoinEventContainer = () => {
       await joinEvent(hit.id, user.uid);
       // 参加完了 → 詳細へ
       navigate({ to: "/events/$eventId", params: { eventId: hit.id } });
-    } catch (e: any) {
-      setError(e.message || "参加に失敗しました");
+    } catch (e: unknown) {
+      setError((e as Error).message || "参加に失敗しました");
     } finally {
       setJoining(false);
     }

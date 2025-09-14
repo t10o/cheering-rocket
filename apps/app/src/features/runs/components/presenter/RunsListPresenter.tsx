@@ -1,12 +1,14 @@
 import { EmptyState } from "@cheering/ui";
-import { RunCardPresenter } from "./RunCardPresenter";
-import { RunsListSkeleton } from "./RunsListSkeleton";
+
 import {
   formatRunDate,
-  formatRunPace,
   formatRunDuration,
+  formatRunPace,
 } from "../../functions/runCard";
 import type { Run } from "../../types";
+
+import { RunCardPresenter } from "./RunCardPresenter";
+import { RunsListSkeleton } from "./RunsListSkeleton";
 
 export type RunsListPresenterProps = {
   runs: Run[];

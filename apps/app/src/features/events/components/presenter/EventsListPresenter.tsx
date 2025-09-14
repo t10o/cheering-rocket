@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
+
 import { Button, EmptyState } from "@cheering/ui";
-import { EventCardPresenter } from "./EventCardPresenter";
-import { EventsListSkeleton } from "./EventsListSkeleton";
+
 import { formatEventDate } from "../../functions/eventCard";
 import type { Event } from "../../types";
+
+import { EventCardPresenter } from "./EventCardPresenter";
+import { EventsListSkeleton } from "./EventsListSkeleton";
 
 export type EventsListPresenterProps = {
   events: Event[];

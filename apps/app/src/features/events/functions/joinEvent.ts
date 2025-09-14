@@ -1,17 +1,19 @@
 import {
+  collection,
   doc,
   getDoc,
   getFirestore,
-  collection,
-  setDoc,
   serverTimestamp,
+  setDoc,
 } from "firebase/firestore";
-import { firebaseApp } from "@/libs/firebase";
+
 import {
-  isEventJoinable,
-  getEventJoinErrorMessage,
   type EventLite,
+  getEventJoinErrorMessage,
+  isEventJoinable,
 } from "./eventValidation";
+
+import { firebaseApp } from "@/libs/firebase";
 
 export type { EventLite };
 
