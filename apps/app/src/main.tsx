@@ -48,22 +48,53 @@ Sentry.init({
 
 // グローバルエラーハンドラーを設定
 window.addEventListener("error", (event) => {
+  console.error("Global error caught:", event.error);
+  console.error("Error filename:", event.filename);
+  console.error("Error line:", event.lineno);
+  console.error("Error col:", event.colno);
   captureException(event.error, "Global Error Handler");
 });
 
 window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled promise rejection:", event.reason);
   captureException(event.reason, "Unhandled Promise Rejection");
 });
 
+// より詳細なエラーキャッチ
+window.addEventListener("uncaughtException", (event) => {
+  console.error("Uncaught exception:", event);
+  captureException(event, "Uncaught Exception");
+});
+
+// ネットワークエラーもキャッチ
+window.addEventListener(
+  "error",
+  (event) => {
+    if (event.target && event.target !== window) {
+      console.error("Resource error:", event.target);
+      captureException(
+        new Error(`Resource error: ${event.target}`),
+        "Resource Error",
+      );
+    }
+  },
+  true,
+);
+
 const rootElement = document.getElementById("root")!;
 
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <ErrorBoundary>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
-    </ErrorBoundary>,
-  );
+try {
+  if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <ErrorBoundary>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ErrorBoundary>,
+    );
+  }
+} catch (error) {
+  console.error("React initialization error:", error);
+  captureException(error, "React Initialization Error");
 }
