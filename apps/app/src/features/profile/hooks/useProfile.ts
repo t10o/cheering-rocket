@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
-import { captureException } from "@/libs/sentry";
 import { getAuth, updateProfile as updateAuthProfile } from "firebase/auth";
 import {
   doc,
@@ -20,6 +19,7 @@ import { firebaseApp } from "../../../libs/firebase";
 import { useAuth } from "../../auth/hooks/useAuth";
 import type { ProfileFormData, UserProfile } from "../types";
 
+import { captureException } from "@/libs/sentry";
 import { convertImageIfNeeded } from "@/shared/functions/imageConverter";
 
 export const useProfile = () => {

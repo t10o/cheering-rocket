@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { captureException } from "@/libs/sentry";
 import { useNavigate } from "@tanstack/react-router";
 
 import { createEvent, type CreateEventData } from "../../functions/createEvent";
 import { CreateEventPresenter } from "../presenter/CreateEventPresenter";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { captureException } from "@/libs/sentry";
 
 export const CreateEventContainer = () => {
   const { user } = useAuth();
