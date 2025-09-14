@@ -7,11 +7,11 @@ describe("runCard", () => {
   describe("formatRunDate", () => {
     it("タイムスタンプを正しくフォーマットする", () => {
       const mockTimestamp = {
-        toDate: () => new Date("2025-11-09T08:20:00Z"),
+        toDate: () => new Date("2025-11-09T17:20:00+09:00"), // JST時刻を直接指定
       } as unknown as Date | Timestamp;
 
       const result = formatRunDate(mockTimestamp);
-      expect(result).toBe("2025年11月9日"); // JST timezone with Japanese format
+      expect(result).toBe("2025年11月9日");
     });
 
     it("undefinedのタイムスタンプを処理する", () => {
