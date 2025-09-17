@@ -9,6 +9,8 @@ export type RunStartPresenterProps = {
   startLoading: boolean;
   eventsError: string | null;
   startError: string | null;
+  hasBackgroundPermission: boolean;
+  checkingBackgroundPermission: boolean;
   onEventSelect: (eventId: string) => void;
   onStartRun: () => void;
   onOpenSettings: () => void;
@@ -21,6 +23,8 @@ export const RunStartPresenter = ({
   startLoading,
   eventsError,
   startError,
+  hasBackgroundPermission,
+  checkingBackgroundPermission,
   onEventSelect,
   onStartRun,
   onOpenSettings,
@@ -128,26 +132,47 @@ export const RunStartPresenter = ({
       <div className="space-y-4">
         <Button
           onClick={onStartRun}
-          isDisabled={!selectedEventId || startLoading}
+          isDisabled={
+            !selectedEventId ||
+            startLoading ||
+            checkingBackgroundPermission ||
+            !hasBackgroundPermission
+          }
           className="w-full"
           size="lg"
         >
-          {startLoading ? "ランを開始中..." : "ランを開始"}
+          {startLoading
+            ? "ランを開始中..."
+            : checkingBackgroundPermission
+              ? "権限を確認中..."
+              : "ランを開始"}
         </Button>
+
+        {!hasBackgroundPermission && (
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-sm text-orange-800 space-y-2">
+            <p>
+              バックグラウンドで位置情報を記録するには、端末の設定で
+              <strong>「常に許可」</strong>に変更してください。
+            </p>
+            <p className="text-xs text-orange-700">
+              位置情報 &gt; アプリの権限 &gt; CheeringRocket &gt; 常に許可
+            </p>
+            <Button
+              onClick={onOpenSettings}
+              variant="outline"
+              size="sm"
+              className="mt-1"
+            >
+              位置情報の設定を開く
+            </Button>
+          </div>
+        )}
 
         <div className="text-sm text-gray-600 text-center space-y-2">
           <p>ラン開始後は位置情報が自動的に記録されます</p>
           <p className="text-xs">
             バックグラウンドで位置情報を取得するため、通知が表示されます
           </p>
-          <Button
-            onClick={onOpenSettings}
-            variant="outline"
-            size="sm"
-            className="mt-2"
-          >
-            位置情報設定を開く
-          </Button>
         </div>
       </div>
     </div>

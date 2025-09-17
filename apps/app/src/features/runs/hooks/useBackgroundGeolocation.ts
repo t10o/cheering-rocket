@@ -12,6 +12,7 @@ import {
 import { firebaseApp } from "../../../libs/firebase";
 
 import { captureException } from "@/libs/sentry";
+import { BackgroundPermission } from "@/plugins/backgroundPermission";
 
 // BackgroundGeolocationプラグインを登録
 const BackgroundGeolocation = registerPlugin<BackgroundGeolocationPlugin>(
@@ -41,6 +42,36 @@ export const useBackgroundGeolocation = () => {
     error: null,
     permissionGranted: false,
   });
+  const [backgroundPermission, setBackgroundPermission] = useState<
+    "unknown" | "granted" | "denied"
+  >(isNativePlatform ? "unknown" : "granted");
+  const [checkingBackgroundPermission, setCheckingBackgroundPermission] =
+    useState(false);
+
+  const refreshBackgroundPermission = useCallback(async () => {
+    if (!isNativePlatform) {
+      setBackgroundPermission("granted");
+      return true;
+    }
+
+    setCheckingBackgroundPermission(true);
+    try {
+      const result = await BackgroundPermission.check();
+      setBackgroundPermission(result.hasBackgroundPermission ? "granted" : "denied");
+      return result.hasBackgroundPermission;
+    } catch (error) {
+      captureException(error, "Background permission check error");
+      setBackgroundPermission("denied");
+      return false;
+    } finally {
+      setCheckingBackgroundPermission(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshBackgroundPermission();
+  }, [refreshBackgroundPermission]);
+
 
   const watcherIdRef = useRef<string | number | null>(null);
   const db = getFirestore(firebaseApp);
@@ -339,5 +370,9 @@ export const useBackgroundGeolocation = () => {
     startTracking,
     stopTracking,
     openSettings,
+    hasBackgroundPermission: backgroundPermission === "granted",
+    backgroundPermissionStatus: backgroundPermission,
+    checkingBackgroundPermission,
+    refreshBackgroundPermission,
   };
 };
