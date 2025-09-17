@@ -15,6 +15,8 @@ export type ProfileFormPresenterProps = {
   onNameChange: (value: string) => void;
   onSave: () => void;
   onToastClose: () => void;
+  onSignOut: () => void;
+  signingOut: boolean;
 };
 
 export const ProfileFormPresenter = ({
@@ -27,6 +29,8 @@ export const ProfileFormPresenter = ({
   onNameChange,
   onSave,
   onToastClose,
+  onSignOut,
+  signingOut,
 }: ProfileFormPresenterProps) => {
   if (loading) {
     return <ProfileFormSkeleton />;
@@ -97,6 +101,17 @@ export const ProfileFormPresenter = ({
             {saving ? "保存中..." : "保存"}
           </Button>
         </div>
+
+        <Card className="p-6">
+          <Button
+            onPress={onSignOut}
+            isDisabled={signingOut}
+            variant="destructive"
+            className="w-full"
+          >
+            {signingOut ? "ログアウト中..." : "ログアウト"}
+          </Button>
+        </Card>
       </div>
 
       {/* トースト */}

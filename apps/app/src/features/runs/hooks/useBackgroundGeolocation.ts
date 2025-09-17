@@ -60,16 +60,28 @@ export const useBackgroundGeolocation = () => {
       },
     ) => {
       try {
-        const locationPoint = {
+        const isFiniteNumber = (value: number | null | undefined) =>
+          typeof value === "number" && Number.isFinite(value);
+
+        const locationPoint: Record<string, unknown> = {
           runId,
           latitude: location.latitude,
           longitude: location.longitude,
           accuracy: location.accuracy,
-          altitude: location.altitude || undefined,
-          speed: location.speed || undefined,
-          heading: location.bearing || undefined,
           timestamp: serverTimestamp(),
         };
+
+        if (isFiniteNumber(location.altitude)) {
+          locationPoint.altitude = location.altitude;
+        }
+
+        if (isFiniteNumber(location.speed)) {
+          locationPoint.speed = location.speed;
+        }
+
+        if (isFiniteNumber(location.bearing)) {
+          locationPoint.heading = location.bearing;
+        }
 
         await addDoc(collection(db, "locationPoints"), locationPoint);
       } catch (error) {

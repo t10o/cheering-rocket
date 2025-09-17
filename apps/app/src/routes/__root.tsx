@@ -10,6 +10,7 @@ import {
   Link,
   Navigate,
   Outlet,
+  useMatchRoute,
   useRouter,
   useRouterState,
 } from "@tanstack/react-router";
@@ -33,10 +34,14 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const { user, loading } = useAuth();
-  const { location } = useRouterState();
+  const routerState = useRouterState();
   const router = useRouter();
+  const matchRoute = useMatchRoute();
 
-  const publicPaths = ["/auth/signin"];
+  const { location } = routerState;
+  const isPublicRoute = Boolean(
+    matchRoute({ to: "/auth/signin", fuzzy: true }),
+  );
 
   if (loading)
     return (
@@ -56,11 +61,11 @@ function RootComponent() {
       </div>
     );
 
-  if (!user && !publicPaths.includes(location.pathname)) {
+  if (!user && !isPublicRoute) {
     return <Navigate to="/auth/signin" search={{ redirect: location.href }} />;
   }
 
-  if (user && location.pathname === "/auth/signin") {
+  if (user && isPublicRoute) {
     return <Navigate to="/" />;
   }
 
@@ -110,7 +115,9 @@ function RootComponent() {
       {user && <TabBar items={tabItems} />}
 
       {/* Start rendering router matches */}
-      <TanStackRouterDevtools position="bottom-right" />
+      {import.meta.env.DEV && (
+        <TanStackRouterDevtools position="bottom-right" />
+      )}
     </>
   );
 }

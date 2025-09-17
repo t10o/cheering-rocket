@@ -88,16 +88,28 @@ export const useLocationTracking = () => {
   const saveLocationPoint = useCallback(
     async (runId: string, position: GeolocationPosition) => {
       try {
-        const locationPoint = {
+        const isFiniteNumber = (value: number | null | undefined) =>
+          typeof value === "number" && Number.isFinite(value);
+
+        const locationPoint: Record<string, unknown> = {
           runId,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-          altitude: position.coords.altitude || undefined,
-          speed: position.coords.speed || undefined,
-          heading: position.coords.heading || undefined,
           timestamp: serverTimestamp(),
         };
+
+        if (isFiniteNumber(position.coords.altitude)) {
+          locationPoint.altitude = position.coords.altitude;
+        }
+
+        if (isFiniteNumber(position.coords.speed)) {
+          locationPoint.speed = position.coords.speed;
+        }
+
+        if (isFiniteNumber(position.coords.heading)) {
+          locationPoint.heading = position.coords.heading;
+        }
 
         await addDoc(collection(db, "locationPoints"), locationPoint);
       } catch (error) {

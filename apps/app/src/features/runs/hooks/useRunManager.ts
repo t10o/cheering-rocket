@@ -7,9 +7,9 @@ import {
   getFirestore,
   limit,
   onSnapshot,
-  orderBy,
   query,
   serverTimestamp,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -28,6 +28,8 @@ export type ActiveRun = {
   cheerMessages: CheerMessage[];
 };
 
+const POLLING_INTERVAL_MS = 15000;
+
 export const useRunManager = () => {
   const { user } = useAuth();
   const db = getFirestore(firebaseApp);
@@ -41,11 +43,101 @@ export const useRunManager = () => {
   useEffect(() => {
     if (!user) return;
 
-    let unsubscribe: (() => void) | undefined;
+    let unsubscribeRun: (() => void) | undefined;
+    let pollingTimer: ReturnType<typeof setInterval> | undefined;
+    let currentRunId: string | null = null;
+    let latestRun: Run | null = null;
+    let latestLocations: LocationPoint[] = [];
+    let latestMessages: CheerMessage[] = [];
+
+    const updateActiveRun = () => {
+      if (!latestRun) return;
+      setActiveRun({
+        run: latestRun,
+        locations: latestLocations,
+        cheerMessages: latestMessages,
+      });
+    };
+
+    const stopPolling = () => {
+      if (pollingTimer) {
+        clearInterval(pollingTimer);
+        pollingTimer = undefined;
+      }
+    };
+
+    const cleanupChildSubscriptions = () => {
+      stopPolling();
+      currentRunId = null;
+      latestLocations = [];
+      latestMessages = [];
+    };
+
+    const fetchChildData = async (runId: string) => {
+      try {
+        const locationsQuery = query(
+          collection(db, "locationPoints"),
+          where("runId", "==", runId),
+        );
+        const messagesQuery = query(
+          collection(db, "cheerMessages"),
+          where("runId", "==", runId),
+        );
+
+        const [locationsSnap, messagesSnap] = await Promise.all([
+          getDocs(locationsQuery),
+          getDocs(messagesQuery),
+        ]);
+
+        latestLocations = locationsSnap.docs
+          .map((doc) => {
+            const data = doc.data() as Omit<LocationPoint, "id">;
+            return {
+              id: doc.id,
+              ...data,
+            } as LocationPoint;
+          })
+          .sort((a, b) => {
+            const aTime =
+              a.timestamp instanceof Timestamp ? a.timestamp.toMillis() : 0;
+            const bTime =
+              b.timestamp instanceof Timestamp ? b.timestamp.toMillis() : 0;
+            return aTime - bTime;
+          });
+
+        latestMessages = messagesSnap.docs
+          .map((doc) => {
+            const data = doc.data() as Omit<CheerMessage, "id">;
+            return {
+              id: doc.id,
+              ...data,
+            } as CheerMessage;
+          })
+          .sort((a, b) => {
+            const aTime =
+              a.timestamp instanceof Timestamp ? a.timestamp.toMillis() : 0;
+            const bTime =
+              b.timestamp instanceof Timestamp ? b.timestamp.toMillis() : 0;
+            return aTime - bTime;
+          });
+
+        updateActiveRun();
+      } catch (fetchError) {
+        console.error("ランデータの取得エラー:", fetchError);
+        captureException(fetchError, "ランデータの取得エラー");
+      }
+    };
+
+    const startPolling = (runId: string) => {
+      stopPolling();
+      fetchChildData(runId);
+      pollingTimer = setInterval(() => {
+        fetchChildData(runId);
+      }, POLLING_INTERVAL_MS);
+    };
 
     const fetchActiveRun = async () => {
       try {
-        // アクティブなランを検索
         const runsRef = collection(db, "runs");
         const q = query(
           runsRef,
@@ -54,8 +146,10 @@ export const useRunManager = () => {
           limit(1),
         );
 
-        unsubscribe = onSnapshot(q, async (snapshot) => {
+        unsubscribeRun = onSnapshot(q, (snapshot) => {
           if (snapshot.empty) {
+            cleanupChildSubscriptions();
+            latestRun = null;
             setActiveRun(null);
             return;
           }
@@ -64,39 +158,16 @@ export const useRunManager = () => {
           if (!runDoc) return;
           const run = { id: runDoc.id, ...runDoc.data() } as Run;
 
-          // 位置情報を取得
-          const locationsRef = collection(db, "locationPoints");
-          const locationsQuery = query(
-            locationsRef,
-            where("runId", "==", run.id),
-            orderBy("timestamp", "asc"),
-          );
+          latestRun = run;
+          updateActiveRun();
 
-          const locationsSnapshot = await getDocs(locationsQuery);
-          const locations = locationsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as LocationPoint[];
+          if (currentRunId === run.id) {
+            return;
+          }
 
-          // 応援メッセージを取得
-          const messagesRef = collection(db, "cheerMessages");
-          const messagesQuery = query(
-            messagesRef,
-            where("runId", "==", run.id),
-            orderBy("timestamp", "asc"),
-          );
-
-          const messagesSnapshot = await getDocs(messagesQuery);
-          const cheerMessages = messagesSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as CheerMessage[];
-
-          setActiveRun({
-            run,
-            locations,
-            cheerMessages,
-          });
+          cleanupChildSubscriptions();
+          currentRunId = run.id;
+          startPolling(run.id);
         });
       } catch (error) {
         console.error("アクティブランの取得エラー:", error);
@@ -108,9 +179,8 @@ export const useRunManager = () => {
     fetchActiveRun();
 
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
+      if (unsubscribeRun) unsubscribeRun();
+      stopPolling();
     };
   }, [db, user]);
 

@@ -63,7 +63,9 @@ export const useRuns = () => {
   }, [db, user]);
 
   const stats: RunStats = useMemo(() => {
-    if (runs.length === 0) {
+    const completedRuns = runs.filter((run) => run.status === "completed");
+
+    if (completedRuns.length === 0) {
       return {
         totalDistance: 0,
         totalRuns: 0,
@@ -73,11 +75,29 @@ export const useRuns = () => {
       };
     }
 
-    const totalDistance = runs.reduce((sum, run) => sum + run.distance, 0);
-    const totalRuns = runs.length;
-    const totalTime = runs.reduce((sum, run) => sum + run.duration, 0);
-    const averagePace = totalTime / totalDistance;
-    const bestPace = Math.min(...runs.map((run) => run.pace));
+    const totalDistance = completedRuns.reduce(
+      (sum, run) => sum + (run.distance || 0),
+      0,
+    );
+    const totalRuns = completedRuns.length;
+    const totalTime = completedRuns.reduce(
+      (sum, run) => sum + (run.duration || 0),
+      0,
+    );
+    const distanceForPace = completedRuns.reduce(
+      (sum, run) => sum + (run.distance || 0),
+      0,
+    );
+    const timeForPace = completedRuns.reduce(
+      (sum, run) => sum + (run.distance ? run.duration : 0),
+      0,
+    );
+    const averagePace =
+      distanceForPace > 0 ? timeForPace / distanceForPace : 0;
+    const validPaces = completedRuns
+      .map((run) => (run.distance ? run.pace : Infinity))
+      .filter((pace) => Number.isFinite(pace) && pace > 0);
+    const bestPace = validPaces.length > 0 ? Math.min(...validPaces) : 0;
 
     return {
       totalDistance,
