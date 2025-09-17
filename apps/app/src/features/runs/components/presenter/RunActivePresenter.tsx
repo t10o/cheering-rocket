@@ -4,6 +4,8 @@ import { Button } from "@cheering/ui";
 
 import type { ActiveRun } from "../../hooks/useRunManager";
 
+import { formatDistance } from "@/shared/functions/formatRunData";
+
 export type RunActivePresenterProps = {
   activeRun: ActiveRun;
   showEndDialog: boolean;
@@ -124,9 +126,9 @@ export const RunActivePresenter = ({
             </div>
             <div>
               <p className="text-2xl font-bold text-green-600">
-                {distance.toFixed(2)}
+                {formatDistance(distance)}
               </p>
-              <p className="text-sm text-gray-600">距離 (km)</p>
+              <p className="text-sm text-gray-600">距離</p>
             </div>
             <div>
               <p className="text-2xl font-bold text-purple-600">

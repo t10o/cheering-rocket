@@ -10,10 +10,16 @@ export const formatPace = (pace: number): string => {
 };
 
 export const formatDistance = (distance: number): string => {
+  if (!Number.isFinite(distance) || distance <= 0) {
+    return "0m";
+  }
+
   if (distance < 1) {
     return `${Math.round(distance * 1000)}m`;
   }
-  return `${distance.toFixed(1)}km`;
+
+  const rounded = Number(distance.toFixed(3));
+  return `${rounded}km`;
 };
 
 export const formatDuration = (duration: number): string => {

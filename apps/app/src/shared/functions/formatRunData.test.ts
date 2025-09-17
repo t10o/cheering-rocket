@@ -35,11 +35,11 @@ describe("formatRunData", () => {
     });
 
     it("1km以上の距離をキロメートルでフォーマットする", () => {
-      expect(formatDistance(1.0)).toBe("1.0km");
+      expect(formatDistance(1.0)).toBe("1km");
     });
 
     it("小数点第1位で距離をフォーマットする", () => {
-      expect(formatDistance(5.25)).toBe("5.3km");
+      expect(formatDistance(5.25)).toBe("5.25km");
     });
 
     it("ゼロの距離を処理する", () => {
@@ -51,8 +51,8 @@ describe("formatRunData", () => {
     });
 
     it("ちょうど1kmの距離を処理する", () => {
-      expect(formatDistance(1)).toBe("1.0km");
-    });
+      expect(formatDistance(1)).toBe("1km");
+  });
   });
 
   describe("formatDuration", () => {

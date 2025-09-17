@@ -27,11 +27,15 @@ describe("runStats", () => {
     });
 
     it("1km以上の距離をキロメートルでフォーマットする", () => {
-      expect(formatStatsDistance(1.0)).toBe("1.0km");
+      expect(formatStatsDistance(1.0)).toBe("1km");
     });
 
-    it("小数点第1位で距離をフォーマットする", () => {
-      expect(formatStatsDistance(5.25)).toBe("5.3km");
+    it("小数点第3位まで距離をフォーマットする", () => {
+      expect(formatStatsDistance(5.25)).toBe("5.25km");
+    });
+
+    it("3桁の小数を保持する", () => {
+      expect(formatStatsDistance(42.195)).toBe("42.195km");
     });
 
     it("ゼロの距離を処理する", () => {
