@@ -72,6 +72,22 @@ export const useBackgroundGeolocation = () => {
     void refreshBackgroundPermission();
   }, [refreshBackgroundPermission]);
 
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void refreshBackgroundPermission();
+      }
+    };
+
+    window.addEventListener("focus", handleVisibility);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("focus", handleVisibility);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [refreshBackgroundPermission]);
+
 
   const watcherIdRef = useRef<string | number | null>(null);
   const db = getFirestore(firebaseApp);

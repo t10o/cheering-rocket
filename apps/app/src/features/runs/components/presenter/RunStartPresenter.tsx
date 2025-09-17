@@ -154,8 +154,9 @@ export const RunStartPresenter = ({
               バックグラウンドで位置情報を記録するには、端末の設定で
               <strong>「常に許可」</strong>に変更してください。
             </p>
-            <p className="text-xs text-orange-700">
-              位置情報 &gt; アプリの権限 &gt; CheeringRocket &gt; 常に許可
+            <p className="text-xs text-orange-700 leading-5">
+              「位置情報の設定を開く」&nbsp;→&nbsp;権限&nbsp;→&nbsp;位置情報&nbsp;→&nbsp;常に許可
+              <br />設定画面で左上の戻るを繰り返してアプリに戻ってください。
             </p>
             <Button
               onClick={onOpenSettings}
