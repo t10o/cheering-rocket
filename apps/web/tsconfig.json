@@ -2,6 +2,7 @@
   "extends": "@cheering/typescript-config/vite",
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]
     }
