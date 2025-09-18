@@ -31,6 +31,7 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
     postMessage,
     isPolling,
     reload,
+    allRunnersFinished,
   } = useCheerSession(eventId);
 
   useEffect(() => {
@@ -59,6 +60,25 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
       runners.find((runner) => runner.profile.runId === selectedRunId) ?? null,
     [runners, selectedRunId],
   );
+
+  const finisherNames = useMemo(() => {
+    if (!allRunnersFinished) return [];
+    return runners
+      .map((runner) => runner.profile.displayName || "ランナー")
+      .filter(Boolean);
+  }, [allRunnersFinished, runners]);
+
+  const finisherListText = useMemo(() => {
+    if (finisherNames.length === 0) return "全員";
+    if (typeof Intl !== "undefined" && "ListFormat" in Intl) {
+      const formatter = new Intl.ListFormat("ja-JP", {
+        style: "long",
+        type: "conjunction",
+      });
+      return formatter.format(finisherNames);
+    }
+    return finisherNames.join("、");
+  }, [finisherNames]);
 
   const handleSubmit = async (payload: {
     senderName: string;
@@ -127,6 +147,20 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
         {!loading && !error && (
           <div className="grid gap-6 lg:grid-cols-[1.8fr_1fr]">
             <section className="space-y-6">
+              {allRunnersFinished && (
+                <div className="rounded-3xl border border-amber-200 bg-amber-50/90 p-6 shadow-lg">
+                  <p className="text-sm uppercase tracking-[0.3em] text-amber-600">
+                    Congratulations
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-amber-800">
+                    {finisherListText} さん、完走おめでとうございます！
+                  </h2>
+                  <p className="mt-3 text-sm text-amber-700">
+                    最後まで走り抜いたみなさんの軌跡はこのまま表示されます。応援メッセージも引き続き残しておけるので、完走の余韻をみんなで分かち合いましょう。
+                  </p>
+                </div>
+              )}
+
               <RunnerMap
                 runners={runners}
                 selectedRunId={selectedRunner?.profile.runId ?? null}

@@ -3,8 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { env } from "@/config/env";
 import { fetchCheerSession, postCheerMessage } from "@/services/cheer";
 import type {
+  CheerMessage,
   CheerSession,
   PostCheerMessagePayload,
+  RunnerSnapshot,
 } from "@/types/cheer";
 
 type LoadReason = "initial" | "poll" | "manual";
@@ -37,6 +39,45 @@ export const useCheerSession = (
   const cursorRef = useRef<string | undefined>(undefined);
   const timerRef = useRef<number | null>(null);
   const latestEventIdRef = useRef(eventId);
+  const persistedDataRef = useRef<{
+    runners: RunnerSnapshot[];
+    messages: CheerMessage[];
+  }>({ runners: [], messages: [] });
+
+  const persistSessionData = useCallback(
+    (incoming: CheerSession): CheerSession => {
+      const previous = persistedDataRef.current;
+
+      const nextRunners =
+        incoming.runners.length > 0 || previous.runners.length === 0
+          ? incoming.runners
+          : previous.runners;
+
+      const nextMessages =
+        incoming.messages.length > 0 || previous.messages.length === 0
+          ? incoming.messages
+          : previous.messages;
+
+      persistedDataRef.current = {
+        runners: nextRunners,
+        messages: nextMessages,
+      };
+
+      if (
+        nextRunners === incoming.runners &&
+        nextMessages === incoming.messages
+      ) {
+        return incoming;
+      }
+
+      return {
+        ...incoming,
+        runners: nextRunners,
+        messages: nextMessages,
+      };
+    },
+    [],
+  );
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -63,7 +104,8 @@ export const useCheerSession = (
           : { eventId };
         const response = await fetchCheerSession(requestPayload);
         cursorRef.current = response.cursor;
-        setSession(response.session);
+        const persistedSession = persistSessionData(response.session);
+        setSession(persistedSession);
         setError(null);
       } catch (fetchError) {
         const message = toErrorMessage(fetchError);
@@ -77,12 +119,13 @@ export const useCheerSession = (
         }
       }
     },
-    [eventId],
+    [eventId, persistSessionData],
   );
 
   useEffect(() => {
     latestEventIdRef.current = eventId;
     cursorRef.current = undefined;
+    persistedDataRef.current = { runners: [], messages: [] };
 
     if (!autoStart) return undefined;
 
@@ -142,6 +185,12 @@ export const useCheerSession = (
     [session?.runners],
   );
 
+  const allRunnersFinished = useMemo(() => {
+    const currentRunners = session?.runners ?? [];
+    if (currentRunners.length === 0) return false;
+    return currentRunners.every((runner) => !runner.isActive);
+  }, [session?.runners]);
+
   return {
     session,
     runners: session?.runners ?? [],
@@ -153,5 +202,6 @@ export const useCheerSession = (
     reload: () => load("manual"),
     postMessage,
     runnerOptions,
+    allRunnersFinished,
   };
 };
