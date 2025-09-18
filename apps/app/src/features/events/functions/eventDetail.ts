@@ -138,7 +138,8 @@ export const generateCheerUrl = (eventId: string) => {
   };
 
   const base = normalizeBase(configured ?? resolveOrigin());
-  return base ? `${base}/cheer/${eventId}` : `/cheer/${eventId}`;
+  const route = `#/cheer/${eventId}`;
+  return base ? `${base}/${route}` : `/${route}`;
 };
 
 export const copyToClipboard = async (text: string) => {

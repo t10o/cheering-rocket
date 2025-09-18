@@ -60,7 +60,7 @@ describe("eventDetail", () => {
 
       const eventId = "test-event-123";
       const result = generateCheerUrl(eventId);
-      expect(result).toBe("https://example.com/cheer/test-event-123");
+      expect(result).toBe("https://example.com/#/cheer/test-event-123");
     });
 
     it("環境変数が設定されていればそちらを優先する", () => {
@@ -69,7 +69,7 @@ describe("eventDetail", () => {
 
       const eventId = "amazing-run";
       const result = generateCheerUrl(eventId);
-      expect(result).toBe("https://cheer.example.com/cheer/amazing-run");
+      expect(result).toBe("https://cheer.example.com/#/cheer/amazing-run");
     });
   });
 

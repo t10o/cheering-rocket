@@ -12,14 +12,28 @@ const isBrowser = typeof window !== "undefined";
 const parseRoute = (): RouteState => {
   if (!isBrowser) return { type: "landing" };
   const url = new URL(window.location.href);
-  const segments = url.pathname.split("/").filter(Boolean);
-  if (segments[0] === "cheer" && segments[1]) {
+
+  const parseSegments = (path: string) => path.split("/").filter(Boolean);
+
+  const hash = url.hash.replace(/^#/, "");
+  const hashSegments = parseSegments(hash);
+  if (hashSegments[0] === "cheer" && hashSegments[1]) {
     return {
       type: "cheer",
-      eventId: decodeURIComponent(segments[1]),
+      eventId: decodeURIComponent(hashSegments[1]),
       searchParams: url.searchParams,
     };
   }
+
+  const pathnameSegments = parseSegments(url.pathname);
+  if (pathnameSegments[0] === "cheer" && pathnameSegments[1]) {
+    return {
+      type: "cheer",
+      eventId: decodeURIComponent(pathnameSegments[1]),
+      searchParams: url.searchParams,
+    };
+  }
+
   return { type: "landing" };
 };
 
@@ -34,9 +48,11 @@ const useRoute = () => {
     };
 
     window.addEventListener("popstate", handleRouteChange);
+    window.addEventListener("hashchange", handleRouteChange);
 
     return () => {
       window.removeEventListener("popstate", handleRouteChange);
+      window.removeEventListener("hashchange", handleRouteChange);
     };
   }, []);
 
