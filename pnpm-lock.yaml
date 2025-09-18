@@ -193,9 +193,6 @@ importers:
         specifier: ^5.0.0
         version: 5.1.1(firebase-admin@12.7.0(encoding@0.1.13))
     devDependencies:
-      '@cheering/typescript-config':
-        specifier: workspace:*
-        version: link:../../../packages/typescript-config
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
