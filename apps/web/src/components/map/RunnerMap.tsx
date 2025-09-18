@@ -133,12 +133,18 @@ export const RunnerMap = ({
     if (!containerRef.current) return;
     if (mapRef.current) return;
 
-    mapRef.current = new mapsApi.Map(containerRef.current, {
+    const mapOptions: google.maps.MapOptions = {
       center: DEFAULT_CENTER,
       zoom: 14,
       disableDefaultUI: true,
       styles: MAP_STYLES,
-    });
+    };
+
+    if (env.googleMapsMapId) {
+      mapOptions.mapId = env.googleMapsMapId;
+    }
+
+    mapRef.current = new mapsApi.Map(containerRef.current, mapOptions);
 
     setDirectionService(new mapsApi.DirectionsService());
   }, [mapsApi]);

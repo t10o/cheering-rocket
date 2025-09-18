@@ -73,7 +73,10 @@ export const useGoogleMaps = () => {
       .then((maps) => {
         if (cancelled) return;
         setMapsApi(maps);
-        setAdvancedMarkerAvailable(Boolean(maps.marker));
+        const supportsAdvancedMarkers = Boolean(
+          maps.marker?.AdvancedMarkerElement && env.googleMapsMapId,
+        );
+        setAdvancedMarkerAvailable(supportsAdvancedMarkers);
       })
       .catch((loadError) => {
         if (cancelled) return;

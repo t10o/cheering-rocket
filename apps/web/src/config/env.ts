@@ -37,6 +37,7 @@ export const env = {
     import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     "VITE_GOOGLE_MAPS_API_KEY",
   ),
+  googleMapsMapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID,
   functionsRegion:
     import.meta.env.VITE_FIREBASE_FUNCTIONS_REGION ?? "asia-northeast1",
   functionsEmulatorOrigin: import.meta.env.VITE_FIREBASE_FUNCTIONS_EMULATOR_ORIGIN,

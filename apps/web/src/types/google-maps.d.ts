@@ -16,7 +16,7 @@ declare global {
       }
 
       class Map {
-        constructor(element: Element, options?: unknown);
+        constructor(element: Element, options?: MapOptions);
         fitBounds(bounds: LatLngBounds, padding?: number | Padding): void;
       }
 
@@ -25,6 +25,14 @@ declare global {
         elementType?: string;
         stylers?: Array<Record<string, unknown>>;
       };
+
+      interface MapOptions {
+        center?: LatLngLiteral;
+        zoom?: number;
+        disableDefaultUI?: boolean;
+        styles?: MapTypeStyle[];
+        mapId?: string;
+      }
 
       interface Padding {
         top?: number;
