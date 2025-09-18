@@ -46,7 +46,7 @@ jobs:
         working-directory: apps/firebase
         env:
           FIREBASE_TOKEN: ${{ env.FIREBASE_TOKEN }}
-        run: pnpm exec firebase deploy --project $FIREBASE_PROJECT_ID --only functions,firestore:rules,firestore:indexes,storage:rules --force
+        run: pnpm exec firebase deploy --project $FIREBASE_PROJECT_ID --only functions,firestore:rules,firestore:indexes,storage --force
 
       - name: Deployment summary
         if: always()

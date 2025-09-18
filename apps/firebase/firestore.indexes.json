@@ -55,6 +55,20 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionId": "cheerMessages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "eventId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [
