@@ -2,6 +2,7 @@ import { EmptyState } from "@cheering/ui";
 
 import {
   formatRunDate,
+  formatRunDistance,
   formatRunDuration,
   formatRunPace,
 } from "../../functions/runCard";
@@ -69,6 +70,7 @@ export const RunsListPresenter = ({
           run={run}
           formatDate={formatRunDate}
           formatPace={formatRunPace}
+          formatDistance={formatRunDistance}
           formatDuration={formatRunDuration}
         />
       ))}
