@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { copyToClipboard,generateCheerUrl, isHeicImage } from "./eventDetail";
+import { copyToClipboard, generateCheerUrl, isHeicImage } from "./eventDetail";
 
 describe("eventDetail", () => {
   describe("isHeicImage", () => {
@@ -40,7 +40,16 @@ describe("eventDetail", () => {
   });
 
   describe("generateCheerUrl", () => {
-    it("正しいcheer URLを生成する", () => {
+    const originalBaseUrl = import.meta.env.VITE_CHEER_WEB_BASE_URL;
+
+    afterEach(() => {
+      (import.meta.env as Record<string, string | undefined>).VITE_CHEER_WEB_BASE_URL =
+        originalBaseUrl;
+    });
+
+    it("環境変数が未設定の場合はwindow.locationを使用する", () => {
+      (import.meta.env as Record<string, string | undefined>).VITE_CHEER_WEB_BASE_URL =
+        undefined;
       // Mock window.location.origin
       Object.defineProperty(window, "location", {
         value: {
@@ -52,6 +61,15 @@ describe("eventDetail", () => {
       const eventId = "test-event-123";
       const result = generateCheerUrl(eventId);
       expect(result).toBe("https://example.com/cheer/test-event-123");
+    });
+
+    it("環境変数が設定されていればそちらを優先する", () => {
+      (import.meta.env as Record<string, string | undefined>).VITE_CHEER_WEB_BASE_URL =
+        "https://cheer.example.com/";
+
+      const eventId = "amazing-run";
+      const result = generateCheerUrl(eventId);
+      expect(result).toBe("https://cheer.example.com/cheer/amazing-run");
     });
   });
 

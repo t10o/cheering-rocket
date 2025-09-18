@@ -45,6 +45,7 @@ export const updateEvent = async (
     name: normalizedData.name,
     plannedAt,
     note: normalizedData.note,
+    updatedBy: userUid,
     updatedAt: serverTimestamp(),
   });
 

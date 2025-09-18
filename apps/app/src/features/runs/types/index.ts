@@ -12,6 +12,7 @@ export type Run = {
   startedAt?: Timestamp; // ラン開始時刻
   endedAt?: Timestamp; // ラン終了時刻
   notes?: string;
+  deviceToken?: string;
   weather?: string;
   temperature?: number;
   heartRate?: number;

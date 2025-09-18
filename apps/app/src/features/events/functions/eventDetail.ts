@@ -85,7 +85,13 @@ export const fetchEventDetail = async (eventId: string) => {
 };
 
 export const generateCheerUrl = (eventId: string) => {
-  return `${window.location.origin}/cheer/${eventId}`;
+  const configured = import.meta.env.VITE_CHEER_WEB_BASE_URL?.trim();
+  const fallbackOrigin =
+    typeof window !== "undefined" && window.location
+      ? window.location.origin
+      : "";
+  const base = (configured && configured.replace(/\/$/, "")) || fallbackOrigin;
+  return `${base}/cheer/${eventId}`;
 };
 
 export const copyToClipboard = async (text: string) => {

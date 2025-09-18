@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "deploy:rules": "firebase deploy --only firestore:rules,storage:rules",
+    "deploy:all": "firebase deploy --only functions,firestore:rules,firestore:indexes,storage:rules",
     "login": "firebase login",
     "emulators": "firebase emulators:start"
   },

@@ -9,12 +9,14 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
+  setDoc,
   Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
 
 import { firebaseApp } from "../../../libs/firebase";
+import { getDevicePushToken } from "../../../libs/pushNotifications";
 import { useAuth } from "../../auth/hooks/useAuth";
 import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
 
@@ -197,6 +199,8 @@ export const useRunManager = () => {
 
       try {
         // 新しいランを作成
+        const deviceToken = await getDevicePushToken();
+
         const runData = {
           userId: user.uid,
           eventId,
@@ -208,10 +212,22 @@ export const useRunManager = () => {
           startedAt: serverTimestamp(),
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
+          ...(deviceToken ? { deviceToken } : {}),
         };
 
         const runRef = await addDoc(collection(db, "runs"), runData);
         const runId = runRef.id;
+
+        if (deviceToken) {
+          setDoc(
+            doc(db, "users", user.uid),
+            { pushToken: deviceToken },
+            { merge: true },
+          ).catch((tokenError) => {
+            console.warn("Failed to persist push token", tokenError);
+            captureException(tokenError, "Push token persist error");
+          });
+        }
 
         // 位置情報の追跡を開始
         const trackingStarted = await locationTracking.startTracking(runId);

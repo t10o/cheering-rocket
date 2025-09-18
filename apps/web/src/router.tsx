@@ -1,0 +1,58 @@
+import { useEffect, useState } from "react";
+
+import { CheerPage } from "@/pages/CheerPage";
+import { LandingPage } from "@/pages/LandingPage";
+
+type RouteState =
+  | { type: "landing" }
+  | { type: "cheer"; eventId: string; searchParams: URLSearchParams };
+
+const isBrowser = typeof window !== "undefined";
+
+const parseRoute = (): RouteState => {
+  if (!isBrowser) return { type: "landing" };
+  const url = new URL(window.location.href);
+  const segments = url.pathname.split("/").filter(Boolean);
+  if (segments[0] === "cheer" && segments[1]) {
+    return {
+      type: "cheer",
+      eventId: decodeURIComponent(segments[1]),
+      searchParams: url.searchParams,
+    };
+  }
+  return { type: "landing" };
+};
+
+const useRoute = () => {
+  const [route, setRoute] = useState<RouteState>(() => parseRoute());
+
+  useEffect(() => {
+    if (!isBrowser) return; // サーバーサイドレンダリング対策
+
+    const handleRouteChange = () => {
+      setRoute(parseRoute());
+    };
+
+    window.addEventListener("popstate", handleRouteChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+    };
+  }, []);
+
+  return route;
+};
+
+export const AppRouter = () => {
+  const route = useRoute();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-marathon-50 to-finish-50 text-gray-900">
+      {route.type === "cheer" ? (
+        <CheerPage eventId={route.eventId} />
+      ) : (
+        <LandingPage />
+      )}
+    </div>
+  );
+};

@@ -30,9 +30,11 @@ export const captureMessage = (
 ) => {
   // 開発モードの場合はコンソールに出力するだけ
   if (import.meta.env.DEV) {
-    console[level === "error" ? "error" : level === "warning" ? "warn" : "log"](
-      `Sentry (開発モード): ${message}`,
-    );
+    if (level === "error") {
+      console.error(`Sentry (開発モード): ${message}`);
+    } else {
+      console.warn(`Sentry (開発モード): ${message}`);
+    }
     return;
   }
 
