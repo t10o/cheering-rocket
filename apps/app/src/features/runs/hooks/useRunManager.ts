@@ -18,6 +18,7 @@ import {
 import { firebaseApp } from "../../../libs/firebase";
 import { getDevicePushToken } from "../../../libs/pushNotifications";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { calculateSegmentDistanceMeters } from "../functions/distance";
 import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
 
 import { useBackgroundGeolocation } from "./useBackgroundGeolocation";
@@ -281,18 +282,11 @@ export const useRunManager = () => {
         let totalDistance = 0;
 
         if (locations.length > 1) {
-          // 簡易的な距離計算（実際のプロダクションではより正確な計算が必要）
           for (let i = 1; i < locations.length; i++) {
             const prev = locations[i - 1];
             const curr = locations[i];
             if (prev && curr) {
-              const distance = calculateDistance(
-                prev.latitude,
-                prev.longitude,
-                curr.latitude,
-                curr.longitude,
-              );
-              totalDistance += distance;
+              totalDistance += calculateSegmentDistanceMeters(prev, curr);
             }
           }
         }
@@ -326,26 +320,6 @@ export const useRunManager = () => {
     },
     [activeRun, db, locationTracking],
   );
-
-  // 距離計算のヘルパー関数（Haversine formula）
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ): number => {
-    const R = 6371000; // 地球の半径（メートル）
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
 
   return {
     activeRun,

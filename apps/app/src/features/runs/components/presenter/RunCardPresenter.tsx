@@ -10,6 +10,7 @@ export type RunCardPresenterProps = {
   formatDate: (timestamp: Date | Timestamp | null | undefined) => string;
   formatPace: (pace: number) => string;
   formatDuration: (duration: number) => string;
+  formatDistance: (distance: number) => string;
 };
 
 export const RunCardPresenter = ({
@@ -18,12 +19,13 @@ export const RunCardPresenter = ({
   formatDate,
   formatPace,
   formatDuration,
+  formatDistance,
 }: RunCardPresenterProps) => {
   return (
     <Card className={className || ""}>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900">{run.distance}km</h3>
+          <h3 className="font-semibold text-gray-900">{formatDistance(run.distance)}</h3>
           <span className="text-sm text-gray-500">{formatDate(run.date)}</span>
         </div>
 

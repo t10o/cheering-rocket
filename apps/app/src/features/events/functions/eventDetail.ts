@@ -85,13 +85,60 @@ export const fetchEventDetail = async (eventId: string) => {
 };
 
 export const generateCheerUrl = (eventId: string) => {
-  const configured = import.meta.env.VITE_CHEER_WEB_BASE_URL?.trim();
-  const fallbackOrigin =
-    typeof window !== "undefined" && window.location
-      ? window.location.origin
-      : "";
-  const base = (configured && configured.replace(/\/$/, "")) || fallbackOrigin;
-  return `${base}/cheer/${eventId}`;
+  const normalizeBase = (value: string | undefined) => {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === "undefined" || trimmed === "null") {
+      return undefined;
+    }
+    return trimmed.replace(/\/+$/, "");
+  };
+
+  const configured = normalizeBase(import.meta.env.VITE_CHEER_WEB_BASE_URL?.trim());
+
+  const resolveOrigin = () => {
+    const sanitizeOrigin = (value?: string | null) => {
+      if (!value) return undefined;
+      const trimmed = value.trim();
+      if (trimmed === "undefined" || trimmed === "null") return undefined;
+      return trimmed;
+    };
+
+    if (typeof window === "undefined" || !window.location) {
+      return undefined;
+    }
+
+    const locationLike = window.location as Partial<
+      Location & {
+        origin?: string;
+        protocol?: string;
+        host?: string;
+        href?: string;
+      }
+    >;
+
+    const directOrigin = sanitizeOrigin(locationLike.origin);
+    if (directOrigin) {
+      return directOrigin;
+    }
+
+    if (locationLike.protocol && locationLike.host) {
+      return `${locationLike.protocol}//${locationLike.host}`;
+    }
+
+    if (typeof locationLike.href === "string") {
+      try {
+        return sanitizeOrigin(new URL(locationLike.href).origin);
+      } catch (error) {
+        console.warn("Failed to derive origin from href", error);
+      }
+    }
+
+    return undefined;
+  };
+
+  const base = normalizeBase(configured ?? resolveOrigin());
+  return base ? `${base}/cheer/${eventId}` : `/cheer/${eventId}`;
 };
 
 export const copyToClipboard = async (text: string) => {

@@ -1,7 +1,7 @@
 import { type Timestamp } from "firebase/firestore";
 
 import { formatDate } from "@/shared/functions/formatDate";
-import { formatDuration, formatPace } from "@/shared/functions/formatRunData";
+import { formatDistance, formatDuration, formatPace } from "@/shared/functions/formatRunData";
 
 export const formatRunDate = (
   timestamp: Date | Timestamp | null | undefined,
@@ -15,4 +15,8 @@ export const formatRunPace = (pace: number): string => {
 
 export const formatRunDuration = (duration: number): string => {
   return formatDuration(duration);
+};
+
+export const formatRunDistance = (distance: number): string => {
+  return formatDistance(distance);
 };

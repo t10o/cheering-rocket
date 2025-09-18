@@ -1,5 +1,6 @@
 import {
   formatRunDate,
+  formatRunDistance,
   formatRunDuration,
   formatRunPace,
 } from "../../functions/runCard";
@@ -18,6 +19,7 @@ export const RunCardContainer = ({ run, className }: RunCardContainerProps) => {
       className={className || ""}
       formatDate={formatRunDate}
       formatPace={formatRunPace}
+      formatDistance={formatRunDistance}
       formatDuration={formatRunDuration}
     />
   );
