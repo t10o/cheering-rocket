@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 
 import { env } from "@/config/env";
-import { useGoogleMaps, type GoogleMapsApi } from "@/hooks/useGoogleMaps";
+import { type GoogleMapsApi,useGoogleMaps } from "@/hooks/useGoogleMaps";
 import type { RunnerSnapshot } from "@/types/cheer";
 import { colorForId } from "@/utils/color";
 
