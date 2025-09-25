@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Capacitor } from "@capacitor/core";
 import { Geolocation, type GeolocationPosition } from "@capacitor/geolocation";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import {
+  Timestamp,
   addDoc,
   collection,
   getFirestore,
@@ -64,24 +66,34 @@ export const useBackgroundLocationTracking = () => {
         const isFiniteNumber = (value: number | null | undefined) =>
           typeof value === "number" && Number.isFinite(value);
 
+        const clientTimestamp = isFiniteNumber(position.timestamp)
+          ? position.timestamp
+          : Date.now();
+
+        if (Capacitor.isNativePlatform()) {
+          return;
+        }
+
         const locationPoint: Record<string, unknown> = {
           runId,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-          timestamp: serverTimestamp(),
+          timestamp: Timestamp.fromMillis(clientTimestamp),
+          recordedAt: serverTimestamp(),
+          clientTimestamp,
         };
 
         if (isFiniteNumber(position.coords.altitude)) {
-          locationPoint.altitude = position.coords.altitude;
+          locationPoint.altitude = position.coords.altitude ?? undefined;
         }
 
         if (isFiniteNumber(position.coords.speed)) {
-          locationPoint.speed = position.coords.speed;
+          locationPoint.speed = position.coords.speed ?? undefined;
         }
 
         if (isFiniteNumber(position.coords.heading)) {
-          locationPoint.heading = position.coords.heading;
+          locationPoint.heading = position.coords.heading ?? undefined;
         }
 
         await addDoc(collection(db, "locationPoints"), locationPoint);

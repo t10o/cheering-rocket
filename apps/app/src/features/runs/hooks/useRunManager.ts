@@ -17,6 +17,7 @@ import {
 
 import { firebaseApp } from "../../../libs/firebase";
 import { getDevicePushToken } from "../../../libs/pushNotifications";
+import { RunnerLocation } from "@/plugins/runnerLocation";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { calculateSegmentDistanceMeters } from "../functions/distance";
 import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
@@ -24,6 +25,7 @@ import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
 import { useBackgroundGeolocation } from "./useBackgroundGeolocation";
 
 import { captureException } from "@/libs/sentry";
+import { Preferences } from "@capacitor/preferences";
 
 export type ActiveRun = {
   run: Run;
@@ -32,6 +34,10 @@ export type ActiveRun = {
 };
 
 const POLLING_INTERVAL_MS = 15000;
+const RUN_ID_PREFERENCE_KEY = "runnerLocation.currentRunId";
+const LAST_LAT_PREF_KEY = "runnerLocation.lastLat";
+const LAST_LNG_PREF_KEY = "runnerLocation.lastLng";
+const BACKGROUND_MIN_DISTANCE = 10;
 
 export const useRunManager = () => {
   const { user } = useAuth();
@@ -41,6 +47,39 @@ export const useRunManager = () => {
   const [activeRun, setActiveRun] = useState<ActiveRun | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const startNativeBackgroundTracking = useCallback(async (runId: string) => {
+    try {
+      await Preferences.set({ key: RUN_ID_PREFERENCE_KEY, value: runId });
+      await Preferences.remove({ key: LAST_LAT_PREF_KEY });
+      await Preferences.remove({ key: LAST_LNG_PREF_KEY });
+
+      const result = await RunnerLocation.start({
+        runId,
+        notificationTitle: "CheeringRocket",
+        notificationBody: "ランの位置情報を記録中",
+        minimumDistanceMeters: BACKGROUND_MIN_DISTANCE,
+      });
+
+      return result.started;
+    } catch (startError) {
+      await Preferences.remove({ key: RUN_ID_PREFERENCE_KEY });
+      captureException(startError, "Native background tracking start error");
+      return false;
+    }
+  }, []);
+
+  const stopNativeBackgroundTracking = useCallback(async () => {
+    try {
+      await RunnerLocation.stop();
+    } catch (stopError) {
+      captureException(stopError, "Native background tracking stop error");
+    }
+
+    await Preferences.remove({ key: RUN_ID_PREFERENCE_KEY });
+    await Preferences.remove({ key: LAST_LAT_PREF_KEY });
+    await Preferences.remove({ key: LAST_LNG_PREF_KEY });
+  }, []);
 
   // アクティブなランを取得
   useEffect(() => {
@@ -154,6 +193,7 @@ export const useRunManager = () => {
             cleanupChildSubscriptions();
             latestRun = null;
             setActiveRun(null);
+            void stopNativeBackgroundTracking();
             return;
           }
 
@@ -230,7 +270,19 @@ export const useRunManager = () => {
           });
         }
 
-        // 位置情報の追跡を開始
+        const backgroundStarted = await startNativeBackgroundTracking(runId);
+
+        if (!backgroundStarted) {
+          await updateDoc(doc(db, "runs", runId), {
+            status: "cancelled",
+            updatedAt: serverTimestamp(),
+          });
+          setError("バックグラウンド位置情報の開始に失敗しました");
+          setLoading(false);
+          return false;
+        }
+
+        // 位置情報の追跡を開始（アプリ内表示用）
         const trackingStarted = await locationTracking.startTracking(runId);
 
         if (!trackingStarted) {
@@ -239,6 +291,7 @@ export const useRunManager = () => {
             status: "cancelled",
             updatedAt: serverTimestamp(),
           });
+          await stopNativeBackgroundTracking();
           setError("位置情報の追跡開始に失敗しました");
           setLoading(false);
           return false;
@@ -276,6 +329,7 @@ export const useRunManager = () => {
       try {
         // 位置情報の追跡を停止
         await locationTracking.stopTracking();
+        await stopNativeBackgroundTracking();
 
         // 距離と時間を計算
         const locations = activeRun.locations;
@@ -302,10 +356,10 @@ export const useRunManager = () => {
           status: "completed" as RunStatus,
           distance: totalDistance / 1000, // km
           duration,
-          pace,
-          endedAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
+            pace,
+            endedAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
 
         setActiveRun(null);
         setLoading(false);

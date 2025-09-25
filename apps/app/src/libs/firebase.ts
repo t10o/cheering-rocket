@@ -4,6 +4,7 @@ import {
   indexedDBLocalPersistence,
   initializeAuth,
 } from "firebase/auth";
+import { enableIndexedDbPersistence, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,6 +16,21 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
+
+const firestore = getFirestore(firebaseApp);
+
+if (typeof window !== "undefined") {
+  enableIndexedDbPersistence(firestore).catch((error) => {
+    const errorCode =
+      typeof error === "object" && error && "code" in error
+        ? String((error as { code: unknown }).code)
+        : "unknown";
+
+    if (errorCode !== "failed-precondition") {
+      console.warn("Failed to enable Firestore persistence", error);
+    }
+  });
+}
 
 export const initWebAuth = () =>
   initializeAuth(firebaseApp, {

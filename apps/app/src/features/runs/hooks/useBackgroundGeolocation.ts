@@ -3,6 +3,7 @@ import { Capacitor, registerPlugin } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import type { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import {
+  Timestamp,
   addDoc,
   collection,
   getFirestore,
@@ -107,15 +108,24 @@ export const useBackgroundGeolocation = () => {
       },
     ) => {
       try {
+        if (Capacitor.isNativePlatform()) {
+          return;
+        }
         const isFiniteNumber = (value: number | null | undefined) =>
           typeof value === "number" && Number.isFinite(value);
+
+        const clientTimestamp = isFiniteNumber(location.time)
+          ? (location.time as number)
+          : Date.now();
 
         const locationPoint: Record<string, unknown> = {
           runId,
           latitude: location.latitude,
           longitude: location.longitude,
           accuracy: location.accuracy,
-          timestamp: serverTimestamp(),
+          timestamp: Timestamp.fromMillis(clientTimestamp),
+          recordedAt: serverTimestamp(),
+          clientTimestamp,
         };
 
         if (isFiniteNumber(location.altitude)) {
