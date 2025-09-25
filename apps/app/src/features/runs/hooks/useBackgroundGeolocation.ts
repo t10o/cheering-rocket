@@ -3,11 +3,11 @@ import { Capacitor, registerPlugin } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import type { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import {
-  Timestamp,
   addDoc,
   collection,
   getFirestore,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 
 import { firebaseApp } from "../../../libs/firebase";

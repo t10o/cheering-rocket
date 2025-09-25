@@ -75,4 +75,4 @@ export const RunnerLocation = registerPlugin<RunnerLocationPlugin>(
   },
 );
 
-export type { RunnerLocationStartOptions, RunnerLocationStatus, LocationPayload };
+export type { LocationPayload,RunnerLocationStartOptions, RunnerLocationStatus };

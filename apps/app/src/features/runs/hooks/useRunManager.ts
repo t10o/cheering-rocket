@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Preferences } from "@capacitor/preferences";
 import {
   addDoc,
   collection,
@@ -17,7 +18,6 @@ import {
 
 import { firebaseApp } from "../../../libs/firebase";
 import { getDevicePushToken } from "../../../libs/pushNotifications";
-import { RunnerLocation } from "@/plugins/runnerLocation";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { calculateSegmentDistanceMeters } from "../functions/distance";
 import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
@@ -25,7 +25,7 @@ import type { CheerMessage, LocationPoint, Run, RunStatus } from "../types";
 import { useBackgroundGeolocation } from "./useBackgroundGeolocation";
 
 import { captureException } from "@/libs/sentry";
-import { Preferences } from "@capacitor/preferences";
+import { RunnerLocation } from "@/plugins/runnerLocation";
 
 export type ActiveRun = {
   run: Run;
