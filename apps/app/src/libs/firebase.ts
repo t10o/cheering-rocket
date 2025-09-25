@@ -4,7 +4,19 @@ import {
   indexedDBLocalPersistence,
   initializeAuth,
 } from "firebase/auth";
-import { enableIndexedDbPersistence, getFirestore } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+import * as firestoreModule from "firebase/firestore";
+
+type FirestoreInternalModule = typeof import("firebase/firestore");
+
+const getFirestoreFn = (firestoreModule as FirestoreInternalModule).getFirestore;
+const initializeFirestoreFn = (firestoreModule as Partial<FirestoreInternalModule>)
+  .initializeFirestore;
+const persistentLocalCacheFn = (firestoreModule as Partial<FirestoreInternalModule>)
+  .persistentLocalCache;
+const persistentMultipleTabManagerFn = (
+  firestoreModule as Partial<FirestoreInternalModule>
+).persistentMultipleTabManager;
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,19 +29,36 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 
-const firestore = getFirestore(firebaseApp);
+let firestore: Firestore;
 
-if (typeof window !== "undefined") {
-  enableIndexedDbPersistence(firestore).catch((error) => {
+const supportsPersistentCache =
+  typeof persistentLocalCacheFn === "function" &&
+  typeof initializeFirestoreFn === "function";
+
+if (typeof window !== "undefined" && supportsPersistentCache) {
+  try {
+    const localCache =
+      typeof persistentMultipleTabManagerFn === "function"
+        ? persistentLocalCacheFn!({
+            tabManager: persistentMultipleTabManagerFn(),
+          })
+        : persistentLocalCacheFn!();
+    firestore = initializeFirestoreFn!(firebaseApp, {
+      localCache,
+    });
+  } catch (error) {
     const errorCode =
       typeof error === "object" && error && "code" in error
         ? String((error as { code: unknown }).code)
         : "unknown";
 
-    if (errorCode !== "failed-precondition") {
-      console.warn("Failed to enable Firestore persistence", error);
+    if (errorCode !== "already-exists") {
+      console.warn("Failed to initialize Firestore persistence", error);
     }
-  });
+    firestore = getFirestoreFn(firebaseApp);
+  }
+} else {
+  firestore = getFirestoreFn(firebaseApp);
 }
 
 export const initWebAuth = () =>
