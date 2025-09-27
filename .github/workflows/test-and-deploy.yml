@@ -34,18 +34,23 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Type check
+        id: typecheck
         run: pnpm check-types
 
       - name: Lint check
+        id: lint
         run: pnpm lint
 
       - name: Format check
+        id: format
         run: pnpm format --check
 
       - name: Run tests
+        id: tests
         run: pnpm test
 
       - name: Build all packages
+        id: build
         run: pnpm build
 
       - name: Test Summary
@@ -57,11 +62,11 @@ jobs:
           echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Checks Performed:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ TypeScript type checking" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ ESLint code quality check" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Prettier format check" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Vitest unit tests" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Build verification" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ steps.typecheck.conclusion == 'success' && '✅' || '❌' }} TypeScript type checking" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ steps.lint.conclusion == 'success' && '✅' || '❌' }} ESLint code quality check" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ steps.format.conclusion == 'success' && '✅' || '❌' }} Prettier format check" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ steps.tests.conclusion == 'success' && '✅' || '❌' }} Vitest unit tests" >> $GITHUB_STEP_SUMMARY
+          echo "- ${{ steps.build.conclusion == 'success' && '✅' || '❌' }} Build verification" >> $GITHUB_STEP_SUMMARY
 
   deploy:
     name: Deploy to Firebase
