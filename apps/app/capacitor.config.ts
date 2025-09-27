@@ -2,7 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
   appId: "com.cheering.rocket",
-  appName: "CheeringRocket",
+  appName: "応援ロケット",
   webDir: "dist",
   server: {
     androidScheme: "https",
