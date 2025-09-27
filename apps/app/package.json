@@ -1,7 +1,7 @@
 {
   "name": "app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,7 +15,9 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync:version": "node scripts/sync-version.mjs",
+    "postversion": "pnpm run sync:version"
   },
   "dependencies": {
     "@capacitor-community/background-geolocation": "^1.2.26",

@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Sync native versions
+        run: pnpm --filter app run sync:version
+
       - name: Type check
         id: typecheck
         run: pnpm check-types
