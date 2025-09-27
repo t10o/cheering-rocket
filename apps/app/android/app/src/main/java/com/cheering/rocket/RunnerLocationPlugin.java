@@ -19,6 +19,12 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 public class RunnerLocationPlugin extends Plugin {
     private static final String PREFS_NAME = "runnerLocation";
     private static final String PREF_RUN_ID = "currentRunId";
+    private static final String PREF_ID_TOKEN = "idToken";
+    private static final String PREF_REFRESH_TOKEN = "refreshToken";
+    private static final String PREF_ID_TOKEN_EXPIRY = "idTokenExpiry";
+    private static final String PREF_PROJECT_ID = "projectId";
+    private static final String PREF_API_KEY = "apiKey";
+    private static final String PREF_MIN_DISTANCE = "minimumDistance";
     private static RunnerLocationPlugin instance;
 
     @Override
@@ -38,6 +44,26 @@ public class RunnerLocationPlugin extends Plugin {
         String notificationTitle = call.getString("notificationTitle", "CheeringRocket");
         String notificationBody = call.getString("notificationBody", "ランの位置情報を記録中");
         float minimumDistance = call.getFloat("minimumDistanceMeters", 10f);
+        String idToken = call.getString("idToken");
+        Double expiry = call.getDouble("idTokenExpiry");
+        String refreshToken = call.getString("refreshToken");
+        String projectId = call.getString("projectId");
+        String apiKey = call.getString("apiKey");
+
+        if (idToken == null || idToken.trim().isEmpty()) {
+            call.reject("idToken is required");
+            return;
+        }
+
+        if (projectId == null || projectId.trim().isEmpty()) {
+            call.reject("projectId is required");
+            return;
+        }
+
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            call.reject("apiKey is required");
+            return;
+        }
 
         if (!hasLocationPermissions()) {
             call.reject("Location permissions are not granted");
@@ -51,13 +77,26 @@ public class RunnerLocationPlugin extends Plugin {
         }
 
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putString(PREF_RUN_ID, runId).apply();
+        preferences.edit()
+            .putString(PREF_RUN_ID, runId)
+            .putString(PREF_ID_TOKEN, idToken)
+            .putString(PREF_REFRESH_TOKEN, refreshToken)
+            .putLong(PREF_ID_TOKEN_EXPIRY, expiry != null ? expiry.longValue() : 0L)
+            .putString(PREF_PROJECT_ID, projectId)
+            .putString(PREF_API_KEY, apiKey)
+            .putFloat(PREF_MIN_DISTANCE, minimumDistance)
+            .apply();
 
         Intent intent = new Intent(context, RunnerLocationService.class);
         intent.putExtra(RunnerLocationService.EXTRA_RUN_ID, runId);
         intent.putExtra(RunnerLocationService.EXTRA_NOTIFICATION_TITLE, notificationTitle);
         intent.putExtra(RunnerLocationService.EXTRA_NOTIFICATION_BODY, notificationBody);
         intent.putExtra(RunnerLocationService.EXTRA_MIN_DISTANCE, minimumDistance);
+        intent.putExtra(RunnerLocationService.EXTRA_ID_TOKEN, idToken);
+        intent.putExtra(RunnerLocationService.EXTRA_REFRESH_TOKEN, refreshToken);
+        intent.putExtra(RunnerLocationService.EXTRA_TOKEN_EXPIRY, expiry != null ? expiry.longValue() : 0L);
+        intent.putExtra(RunnerLocationService.EXTRA_PROJECT_ID, projectId);
+        intent.putExtra(RunnerLocationService.EXTRA_API_KEY, apiKey);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ContextCompat.startForegroundService(context, intent);
@@ -81,6 +120,12 @@ public class RunnerLocationPlugin extends Plugin {
                 .remove(PREF_RUN_ID)
                 .remove(RunnerLocationService.PREF_LAST_LAT)
                 .remove(RunnerLocationService.PREF_LAST_LNG)
+                .remove(PREF_ID_TOKEN)
+                .remove(PREF_REFRESH_TOKEN)
+                .remove(PREF_ID_TOKEN_EXPIRY)
+                .remove(PREF_PROJECT_ID)
+                .remove(PREF_API_KEY)
+                .remove(PREF_MIN_DISTANCE)
                 .apply();
         }
 

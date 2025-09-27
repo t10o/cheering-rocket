@@ -30,6 +30,23 @@ export function getAuthInstance(): Auth {
     });
   } catch (e) {
     _auth = auth;
+    const code =
+      typeof e === "object" && e && "code" in e
+        ? String((e as { code: unknown }).code)
+        : null;
+    const message =
+      typeof e === "object" && e && "message" in e
+        ? String((e as { message: unknown }).message)
+        : null;
+
+    if (code === "auth/already-initialized") {
+      return _auth;
+    }
+
+    if (message?.includes("auth/already-initialized")) {
+      return _auth;
+    }
+
     Sentry.captureException(e);
   }
 

@@ -112,6 +112,9 @@ export const useBackgroundGeolocation = () => {
       },
     ) => {
       if (!runId) return;
+      if (isNativePlatform) {
+        return;
+      }
 
       try {
         const isFiniteNumber = (value: number | null | undefined) =>
@@ -324,6 +327,9 @@ export const useBackgroundGeolocation = () => {
 
   const recordInitialLocation = useCallback(
     async (runId: string) => {
+      if (isNativePlatform) {
+        return true;
+      }
       try {
         const position = await CapacitorGeolocation.getCurrentPosition({
           enableHighAccuracy: true,

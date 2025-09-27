@@ -17,6 +17,11 @@ type RunnerLocationStartOptions = {
   notificationTitle?: string;
   notificationBody?: string;
   minimumDistanceMeters?: number;
+  idToken: string;
+  refreshToken?: string | null;
+  idTokenExpiry?: number;
+  projectId: string;
+  apiKey: string;
 };
 
 type RunnerLocationStartResult = {
@@ -75,4 +80,4 @@ export const RunnerLocation = registerPlugin<RunnerLocationPlugin>(
   },
 );
 
-export type { LocationPayload,RunnerLocationStartOptions, RunnerLocationStatus };
+export type { LocationPayload, RunnerLocationStartOptions, RunnerLocationStatus };

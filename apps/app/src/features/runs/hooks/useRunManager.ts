@@ -48,26 +48,52 @@ export const useRunManager = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const startNativeBackgroundTracking = useCallback(async (runId: string) => {
-    try {
-      await Preferences.set({ key: RUN_ID_PREFERENCE_KEY, value: runId });
-      await Preferences.remove({ key: LAST_LAT_PREF_KEY });
-      await Preferences.remove({ key: LAST_LNG_PREF_KEY });
+  const startNativeBackgroundTracking = useCallback(
+    async (runId: string) => {
+      if (!user) {
+        return false;
+      }
 
-      const result = await RunnerLocation.start({
-        runId,
-        notificationTitle: "CheeringRocket",
-        notificationBody: "ランの位置情報を記録中",
-        minimumDistanceMeters: BACKGROUND_MIN_DISTANCE,
-      });
+      try {
+        const tokenResult = await user.getIdTokenResult(true);
+        const idToken = tokenResult.token;
+        const refreshToken = user.refreshToken || null;
+        const expirationTime = tokenResult.expirationTime
+          ? new Date(tokenResult.expirationTime).getTime()
+          : Date.now() + 55 * 60 * 1000;
 
-      return result.started;
-    } catch (startError) {
-      await Preferences.remove({ key: RUN_ID_PREFERENCE_KEY });
-      captureException(startError, "Native background tracking start error");
-      return false;
-    }
-  }, []);
+        const projectId = firebaseApp.options.projectId;
+        const apiKey = firebaseApp.options.apiKey;
+
+        if (!projectId || !apiKey) {
+          throw new Error("Firebase project configuration is missing");
+        }
+
+        await Preferences.set({ key: RUN_ID_PREFERENCE_KEY, value: runId });
+        await Preferences.remove({ key: LAST_LAT_PREF_KEY });
+        await Preferences.remove({ key: LAST_LNG_PREF_KEY });
+
+        const result = await RunnerLocation.start({
+          runId,
+          notificationTitle: "CheeringRocket",
+          notificationBody: "ランの位置情報を記録中",
+          minimumDistanceMeters: BACKGROUND_MIN_DISTANCE,
+          idToken,
+          refreshToken,
+          idTokenExpiry: expirationTime,
+          projectId,
+          apiKey,
+        });
+
+        return result.started;
+      } catch (startError) {
+        await Preferences.remove({ key: RUN_ID_PREFERENCE_KEY });
+        captureException(startError, "Native background tracking start error");
+        return false;
+      }
+    },
+    [user],
+  );
 
   const stopNativeBackgroundTracking = useCallback(async () => {
     try {
