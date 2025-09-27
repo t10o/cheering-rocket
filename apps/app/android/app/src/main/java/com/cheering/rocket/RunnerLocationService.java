@@ -16,18 +16,14 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.getcapacitor.JSObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class RunnerLocationService extends Service {
     public static final String EXTRA_RUN_ID = "runId";
@@ -41,7 +37,6 @@ public class RunnerLocationService extends Service {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
-    private FirebaseFirestore firestore;
     private float minimumDistanceMeters = 10f;
     private String runId;
 
@@ -49,7 +44,6 @@ public class RunnerLocationService extends Service {
     public void onCreate() {
         super.onCreate();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        ensureFirebase();
     }
 
     @Override
@@ -66,6 +60,7 @@ public class RunnerLocationService extends Service {
 
         startForegroundNotification(title, body);
         startLocationUpdates();
+        RunnerLocationPlugin.dispatchStatus(true);
         return START_STICKY;
     }
 
@@ -73,22 +68,13 @@ public class RunnerLocationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopLocationUpdates();
+        RunnerLocationPlugin.dispatchStatus(false);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    private void ensureFirebase() {
-        try {
-            if (FirebaseApp.getApps(this).isEmpty()) {
-                FirebaseApp.initializeApp(this);
-            }
-            firestore = FirebaseFirestore.getInstance();
-        } catch (IllegalStateException ignored) {
-        }
     }
 
     private void startForegroundNotification(String title, String body) {
@@ -155,7 +141,7 @@ public class RunnerLocationService extends Service {
     }
 
     private void handleLocation(Location location) {
-        if (firestore == null || runId == null) {
+        if (runId == null) {
             return;
         }
 
@@ -186,25 +172,24 @@ public class RunnerLocationService extends Service {
             .putLong(PREF_LAST_LNG, Double.doubleToLongBits(location.getLongitude()))
             .apply();
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("runId", runId);
-        data.put("latitude", location.getLatitude());
-        data.put("longitude", location.getLongitude());
-        data.put("accuracy", (double) location.getAccuracy());
-        data.put("clientTimestamp", location.getTime());
-        data.put("recordedAt", FieldValue.serverTimestamp());
+        JSObject payload = new JSObject();
+        payload.put("latitude", location.getLatitude());
+        payload.put("longitude", location.getLongitude());
+        payload.put("accuracy", location.getAccuracy());
+        payload.put("clientTimestamp", location.getTime());
+        payload.put("runId", runId);
 
         if (location.hasAltitude()) {
-            data.put("altitude", location.getAltitude());
+            payload.put("altitude", location.getAltitude());
         }
         if (location.hasSpeed()) {
-            data.put("speed", (double) location.getSpeed());
+            payload.put("speed", location.getSpeed());
         }
         if (location.hasBearing()) {
-            data.put("heading", (double) location.getBearing());
+            payload.put("heading", location.getBearing());
         }
 
-        firestore.collection("locationPoints").add(data);
+        RunnerLocationPlugin.dispatchLocationUpdate(payload);
     }
 
     public static boolean isServiceRunning(Context context) {

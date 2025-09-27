@@ -19,6 +19,13 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 public class RunnerLocationPlugin extends Plugin {
     private static final String PREFS_NAME = "runnerLocation";
     private static final String PREF_RUN_ID = "currentRunId";
+    private static RunnerLocationPlugin instance;
+
+    @Override
+    public void load() {
+        super.load();
+        instance = this;
+    }
 
     @PluginMethod
     public void start(PluginCall call) {
@@ -78,6 +85,21 @@ public class RunnerLocationPlugin extends Plugin {
         }
 
         call.resolve();
+    }
+
+    static void dispatchLocationUpdate(JSObject payload) {
+        if (instance != null) {
+            instance.notifyListeners("locationUpdate", payload);
+        }
+    }
+
+    static void dispatchStatus(boolean isTracking) {
+        if (instance != null) {
+            JSObject status = new JSObject();
+            status.put("isTracking", isTracking);
+            status.put("hasBackgroundPermission", instance.hasLocationPermissions());
+            instance.notifyListeners("status", status);
+        }
     }
 
     @PluginMethod

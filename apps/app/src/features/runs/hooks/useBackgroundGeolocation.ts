@@ -14,6 +14,7 @@ import { firebaseApp } from "../../../libs/firebase";
 
 import { captureException } from "@/libs/sentry";
 import { BackgroundPermission } from "@/plugins/backgroundPermission";
+import { RunnerLocation } from "@/plugins/runnerLocation";
 
 // BackgroundGeolocationプラグインを登録
 const BackgroundGeolocation = registerPlugin<BackgroundGeolocationPlugin>(
@@ -91,6 +92,7 @@ export const useBackgroundGeolocation = () => {
 
 
   const watcherIdRef = useRef<string | number | null>(null);
+  const nativeRunIdRef = useRef<string | null>(null);
   const db = getFirestore(firebaseApp);
 
   // 位置情報をFirestoreに保存
@@ -107,10 +109,9 @@ export const useBackgroundGeolocation = () => {
         time: number;
       },
     ) => {
+      if (!runId) return;
+
       try {
-        if (Capacitor.isNativePlatform()) {
-          return;
-        }
         const isFiniteNumber = (value: number | null | undefined) =>
           typeof value === "number" && Number.isFinite(value);
 
@@ -148,6 +149,60 @@ export const useBackgroundGeolocation = () => {
     },
     [db],
   );
+
+  useEffect(() => {
+    if (!isNativePlatform) {
+      return;
+    }
+
+    let active = true;
+    const subscription = RunnerLocation.addListener(
+      "locationUpdate",
+      (payload) => {
+        if (!active) return;
+        const runId = nativeRunIdRef.current;
+        if (!runId) return;
+
+        const latitude = Number(payload.latitude);
+        const longitude = Number(payload.longitude);
+        const accuracy = Number(payload.accuracy ?? 0);
+        const altitude = payload.altitude as number | null | undefined;
+        const speed = payload.speed as number | null | undefined;
+        const heading = payload.heading as number | null | undefined;
+        const clientTimestamp = Number(payload.clientTimestamp ?? Date.now());
+
+        setState((prev) => ({
+          ...prev,
+          currentLocation: {
+            latitude,
+            longitude,
+            accuracy,
+            altitude: altitude ?? null,
+            speed: speed ?? null,
+            bearing: heading ?? null,
+            time: clientTimestamp,
+          },
+          error: null,
+          permissionGranted: true,
+        }));
+
+        void saveLocationPoint(runId, {
+          latitude,
+          longitude,
+          accuracy,
+          altitude: altitude ?? undefined,
+          speed: speed ?? undefined,
+          bearing: heading ?? undefined,
+          time: clientTimestamp,
+        });
+      },
+    );
+
+    return () => {
+      active = false;
+      subscription.then((handle) => handle.remove()).catch(console.error);
+    };
+  }, [saveLocationPoint]);
 
   const startBrowserTracking = useCallback(
     async (runId: string) => {
@@ -243,66 +298,13 @@ export const useBackgroundGeolocation = () => {
 
       try {
         await LocalNotifications.requestPermissions();
-
-        const watcherId = await BackgroundGeolocation.addWatcher(
-          {
-            backgroundMessage: "ラン中の位置情報を記録中...",
-            backgroundTitle: "CheeringRocket",
-            requestPermissions: true,
-            stale: false,
-            distanceFilter: 10,
-          },
-          (location, error) => {
-            if (error) {
-              console.error("位置情報取得エラー:", error);
-
-              if (error.code === "NOT_AUTHORIZED") {
-                setState((prev) => ({
-                  ...prev,
-                  error:
-                    "位置情報の権限が必要です。設定から権限を許可してください。",
-                }));
-              } else {
-                setState((prev) => ({
-                  ...prev,
-                  error: "位置情報の取得に失敗しました",
-                }));
-              }
-              return;
-            }
-
-            if (location) {
-              setState((prev) => ({
-                ...prev,
-                currentLocation: {
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                  accuracy: location.accuracy,
-                  altitude: location.altitude ?? null,
-                  speed: location.speed ?? null,
-                  bearing: location.bearing ?? null,
-                  time: location.time || Date.now(),
-                },
-                error: null,
-                permissionGranted: true,
-              }));
-
-              saveLocationPoint(runId, {
-                latitude: location.latitude,
-                longitude: location.longitude,
-                accuracy: location.accuracy,
-                altitude: location.altitude ?? undefined,
-                speed: location.speed ?? undefined,
-                bearing: location.bearing ?? undefined,
-                time: location.time || Date.now(),
-              });
-            }
-          },
-        );
-
-        watcherIdRef.current = watcherId;
-        setState((prev) => ({ ...prev, isTracking: true }));
-
+        nativeRunIdRef.current = runId;
+        setState((prev) => ({
+          ...prev,
+          isTracking: true,
+          error: null,
+          permissionGranted: backgroundPermission === "granted",
+        }));
         return true;
       } catch (error) {
         console.error("バックグラウンド位置情報監視の開始エラー:", error);
@@ -321,6 +323,15 @@ export const useBackgroundGeolocation = () => {
   // バックグラウンド位置情報の監視を停止
   const stopTracking = useCallback(async () => {
     if (watcherIdRef.current === null) {
+      if (isNativePlatform) {
+        nativeRunIdRef.current = null;
+        setState((prev) => ({
+          ...prev,
+          isTracking: false,
+          currentLocation: null,
+        }));
+        return true;
+      }
       return true;
     }
 

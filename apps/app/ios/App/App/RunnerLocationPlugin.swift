@@ -1,13 +1,10 @@
 import Foundation
 import Capacitor
 import CoreLocation
-import FirebaseCore
-import FirebaseFirestore
 
 @objc(RunnerLocationPlugin)
 public class RunnerLocationPlugin: CAPPlugin {
     private let locationManager = CLLocationManager()
-    private var firestore: Firestore?
     private var runId: String?
     private var minimumDistanceMeters: Double = 10
     private var isTracking = false
@@ -38,11 +35,6 @@ public class RunnerLocationPlugin: CAPPlugin {
 
         self.runId = runId
         self.minimumDistanceMeters = call.getDouble("minimumDistanceMeters") ?? 10
-
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
-        firestore = Firestore.firestore()
 
         UserDefaults.standard.set(runId, forKey: "runnerLocation.runId")
 
@@ -91,7 +83,6 @@ public class RunnerLocationPlugin: CAPPlugin {
 
     private func handle(location: CLLocation) {
         guard let runId else { return }
-        guard let firestore else { return }
         guard location.horizontalAccuracy > 0 else { return }
 
         let last = lastLocation
@@ -108,27 +99,6 @@ public class RunnerLocationPlugin: CAPPlugin {
         defaults.set(location.coordinate.latitude, forKey: "runnerLocation.lastLat")
         defaults.set(location.coordinate.longitude, forKey: "runnerLocation.lastLng")
 
-        var data: [String: Any] = [
-            "runId": runId,
-            "latitude": location.coordinate.latitude,
-            "longitude": location.coordinate.longitude,
-            "accuracy": location.horizontalAccuracy,
-            "clientTimestamp": Int64(location.timestamp.timeIntervalSince1970 * 1000),
-            "recordedAt": FieldValue.serverTimestamp()
-        ]
-
-        if location.verticalAccuracy >= 0 {
-            data["altitude"] = location.altitude
-        }
-        if location.speedAccuracy >= 0 {
-            data["speed"] = location.speed
-        }
-        if location.courseAccuracy >= 0 {
-            data["heading"] = location.course
-        }
-
-        firestore.collection("locationPoints").addDocument(data: data)
-
         notifyListeners("locationUpdate", data: [
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude,
@@ -136,7 +106,8 @@ public class RunnerLocationPlugin: CAPPlugin {
             "altitude": location.verticalAccuracy >= 0 ? location.altitude : NSNull(),
             "speed": location.speedAccuracy >= 0 ? location.speed : NSNull(),
             "heading": location.courseAccuracy >= 0 ? location.course : NSNull(),
-            "clientTimestamp": Int64(location.timestamp.timeIntervalSince1970 * 1000)
+            "clientTimestamp": Int64(location.timestamp.timeIntervalSince1970 * 1000),
+            "runId": runId
         ])
     }
 }
