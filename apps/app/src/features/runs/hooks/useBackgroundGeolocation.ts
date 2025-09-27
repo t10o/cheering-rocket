@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import { Geolocation as CapacitorGeolocation } from "@capacitor/geolocation";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import type { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import {
@@ -59,7 +60,9 @@ export const useBackgroundGeolocation = () => {
     setCheckingBackgroundPermission(true);
     try {
       const result = await BackgroundPermission.check();
-      setBackgroundPermission(result.hasBackgroundPermission ? "granted" : "denied");
+      setBackgroundPermission(
+        result.hasBackgroundPermission ? "granted" : "denied",
+      );
       return result.hasBackgroundPermission;
     } catch (error) {
       captureException(error, "Background permission check error");
@@ -89,7 +92,6 @@ export const useBackgroundGeolocation = () => {
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [refreshBackgroundPermission]);
-
 
   const watcherIdRef = useRef<string | number | null>(null);
   const nativeRunIdRef = useRef<string | null>(null);
@@ -320,6 +322,49 @@ export const useBackgroundGeolocation = () => {
     [saveLocationPoint, startBrowserTracking],
   );
 
+  const recordInitialLocation = useCallback(
+    async (runId: string) => {
+      try {
+        const position = await CapacitorGeolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+        });
+
+        const clientTimestamp = position.timestamp ?? Date.now();
+
+        setState((prev) => ({
+          ...prev,
+          currentLocation: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            altitude: position.coords.altitude ?? null,
+            speed: position.coords.speed ?? null,
+            bearing: position.coords.heading ?? null,
+            time: clientTimestamp,
+          },
+        }));
+
+        await saveLocationPoint(runId, {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          altitude: position.coords.altitude ?? undefined,
+          speed: position.coords.speed ?? undefined,
+          bearing: position.coords.heading ?? undefined,
+          time: clientTimestamp,
+        });
+
+        return true;
+      } catch (error) {
+        console.error("初回位置情報の取得に失敗しました", error);
+        captureException(error, "Initial location fetch error");
+        return false;
+      }
+    },
+    [saveLocationPoint],
+  );
+
   // バックグラウンド位置情報の監視を停止
   const stopTracking = useCallback(async () => {
     if (watcherIdRef.current === null) {
@@ -411,5 +456,6 @@ export const useBackgroundGeolocation = () => {
     backgroundPermissionStatus: backgroundPermission,
     checkingBackgroundPermission,
     refreshBackgroundPermission,
+    recordInitialLocation,
   };
 };

@@ -297,6 +297,8 @@ export const useRunManager = () => {
           return false;
         }
 
+        void locationTracking.recordInitialLocation?.(runId);
+
         setLoading(false);
         return true;
       } catch (error) {
