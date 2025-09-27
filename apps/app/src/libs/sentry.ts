@@ -6,6 +6,37 @@ import * as Sentry from "@sentry/react";
  * @param context エラーのコンテキスト情報
  */
 export const captureException = (error: unknown, context?: string) => {
+  const shouldIgnore = (() => {
+    if (!error) return false;
+    const code =
+      typeof error === "object" && error && "code" in error
+        ? String((error as { code?: unknown }).code ?? "")
+        : "";
+    const message =
+      typeof error === "string"
+        ? error
+        : error instanceof Error
+          ? error.message
+          : typeof error === "object" && error && "message" in error
+            ? String((error as { message?: unknown }).message ?? "")
+            : "";
+
+    return (
+      code === "auth/already-initialized" ||
+      message.includes("auth/already-initialized")
+    );
+  })();
+
+  if (shouldIgnore) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        "Sentry (ignored):",
+        context ? `${context} - ${error}` : error,
+      );
+    }
+    return;
+  }
+
   // 開発モードの場合はコンソールに出力するだけ
   if (import.meta.env.DEV) {
     console.error(

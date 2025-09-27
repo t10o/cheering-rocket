@@ -32,6 +32,8 @@ public class RunnerLocationService extends Service {
     public static final String EXTRA_MIN_DISTANCE = "minimumDistance";
     public static final String PREF_LAST_LAT = "lastLat";
     public static final String PREF_LAST_LNG = "lastLng";
+    public static final String PREF_LAST_TS = "lastTimestamp";
+    private static final long MIN_TIME_GAP_MS = 60_000L;
     private static final String PREFS_NAME = "runnerLocation";
     private static final String CHANNEL_ID = "runner_location_channel";
 
@@ -153,6 +155,10 @@ public class RunnerLocationService extends Service {
         double lastLat = Double.longBitsToDouble(preferences.getLong(PREF_LAST_LAT, Double.doubleToLongBits(Double.NaN)));
         double lastLng = Double.longBitsToDouble(preferences.getLong(PREF_LAST_LNG, Double.doubleToLongBits(Double.NaN)));
 
+        long lastTimestamp = preferences.getLong(PREF_LAST_TS, Long.MIN_VALUE);
+        long currentTimestamp = location.getTime() > 0 ? location.getTime() : System.currentTimeMillis();
+
+        boolean movedEnough = true;
         if (!Double.isNaN(lastLat) && !Double.isNaN(lastLng)) {
             float[] results = new float[1];
             Location.distanceBetween(
@@ -162,21 +168,26 @@ public class RunnerLocationService extends Service {
                 location.getLongitude(),
                 results
             );
-            if (results[0] < minimumDistanceMeters) {
-                return;
-            }
+            movedEnough = results[0] >= minimumDistanceMeters;
+        }
+
+        boolean waitedLongEnough = lastTimestamp == Long.MIN_VALUE || (currentTimestamp - lastTimestamp) >= MIN_TIME_GAP_MS;
+
+        if (!movedEnough && !waitedLongEnough) {
+            return;
         }
 
         preferences.edit()
             .putLong(PREF_LAST_LAT, Double.doubleToLongBits(location.getLatitude()))
             .putLong(PREF_LAST_LNG, Double.doubleToLongBits(location.getLongitude()))
+            .putLong(PREF_LAST_TS, currentTimestamp)
             .apply();
 
         JSObject payload = new JSObject();
         payload.put("latitude", location.getLatitude());
         payload.put("longitude", location.getLongitude());
         payload.put("accuracy", location.getAccuracy());
-        payload.put("clientTimestamp", location.getTime());
+        payload.put("clientTimestamp", currentTimestamp);
         payload.put("runId", runId);
 
         if (location.hasAltitude()) {

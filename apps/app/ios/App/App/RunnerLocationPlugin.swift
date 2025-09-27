@@ -9,6 +9,8 @@ public class RunnerLocationPlugin: CAPPlugin {
     private var minimumDistanceMeters: Double = 10
     private var isTracking = false
     private var lastLocation: CLLocation?
+    private var lastBroadcastAt: Date?
+    private let minTimeGap: TimeInterval = 60
 
     override public func load() {
         super.load()
@@ -57,6 +59,7 @@ public class RunnerLocationPlugin: CAPPlugin {
             self.locationManager.allowsBackgroundLocationUpdates = false
             self.isTracking = false
             self.lastLocation = nil
+            self.lastBroadcastAt = nil
             UserDefaults.standard.removeObject(forKey: "runnerLocation.runId")
             UserDefaults.standard.removeObject(forKey: "runnerLocation.lastLat")
             UserDefaults.standard.removeObject(forKey: "runnerLocation.lastLng")
@@ -86,14 +89,23 @@ public class RunnerLocationPlugin: CAPPlugin {
         guard location.horizontalAccuracy > 0 else { return }
 
         let last = lastLocation
+        let timestamp = location.timestamp
+        let shouldRecordByTime: Bool
+        if let lastBroadcastAt {
+            shouldRecordByTime = timestamp.timeIntervalSince(lastBroadcastAt) >= minTimeGap
+        } else {
+            shouldRecordByTime = true
+        }
+
         if let last {
             let distance = location.distance(from: last)
-            if distance < minimumDistanceMeters {
+            if distance < minimumDistanceMeters && !shouldRecordByTime {
                 return
             }
         }
 
         lastLocation = location
+        lastBroadcastAt = timestamp
 
         let defaults = UserDefaults.standard
         defaults.set(location.coordinate.latitude, forKey: "runnerLocation.lastLat")
