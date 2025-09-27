@@ -81,7 +81,6 @@ public class RunnerLocationPlugin extends Plugin {
                 .remove(PREF_RUN_ID)
                 .remove(RunnerLocationService.PREF_LAST_LAT)
                 .remove(RunnerLocationService.PREF_LAST_LNG)
-                .remove(RunnerLocationService.PREF_LAST_TS)
                 .apply();
         }
 
