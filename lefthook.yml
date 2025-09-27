@@ -1,0 +1,7 @@
+pre-commit:
+  piped: true
+  commands:
+    lint_fix:
+      run: pnpm lint:fix
+    type_check:
+      run: pnpm check-types
