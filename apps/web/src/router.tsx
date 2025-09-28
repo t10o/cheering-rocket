@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import { CheerPage } from "@/pages/CheerPage";
 import { LandingPage } from "@/pages/LandingPage";
@@ -63,12 +65,18 @@ export const AppRouter = () => {
   const route = useRoute();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-marathon-50 to-finish-50 text-gray-900">
-      {route.type === "cheer" ? (
-        <CheerPage eventId={route.eventId} />
-      ) : (
-        <LandingPage />
-      )}
-    </div>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-white via-marathon-50 to-finish-50 text-gray-900">
+        {route.type === "cheer" ? (
+          <CheerPage eventId={route.eventId} />
+        ) : (
+          <LandingPage />
+        )}
+      </div>
+
+      <SpeedInsights />
+
+      <Analytics />
+    </>
   );
 };
