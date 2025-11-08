@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.cheering.rocket.BuildConfig;
 import com.getcapacitor.JSObject;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -87,7 +88,8 @@ public class RunnerLocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        debug = (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        boolean debuggableFlag = (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        debug = BuildConfig.RUNNER_LOCATION_VERBOSE_LOGS || debuggableFlag;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         credentialStore = new CredentialStore(this, debug);
         executor = Executors.newSingleThreadScheduledExecutor();
@@ -679,16 +681,23 @@ public class RunnerLocationService extends Service {
 
         synchronized String getValidIdToken() {
             long now = System.currentTimeMillis();
-            if (idToken != null && !idToken.isEmpty()) {
-                if (expiryMillis == 0L || now < expiryMillis - 60000) {
-                    return idToken;
-                }
+            boolean hasNonExpiredToken =
+                idToken != null &&
+                !idToken.isEmpty() &&
+                expiryMillis > 0L &&
+                now < expiryMillis - 60000;
+
+            if (hasNonExpiredToken) {
+                return idToken;
             }
+
             return refreshIdTokenLocked(now);
         }
 
         synchronized void invalidate() {
+            idToken = null;
             expiryMillis = 0L;
+            persist();
         }
 
         private void persist() {
@@ -703,10 +712,12 @@ public class RunnerLocationService extends Service {
 
         private String refreshIdTokenLocked(long now) {
             if (refreshToken == null || refreshToken.isEmpty()) {
-                if (idToken != null && !idToken.isEmpty() && (expiryMillis == 0L || now < expiryMillis - 60000)) {
-                    return idToken;
-                }
-                return null;
+                boolean stillValid =
+                    idToken != null &&
+                    !idToken.isEmpty() &&
+                    expiryMillis > 0L &&
+                    now < expiryMillis - 60000;
+                return stillValid ? idToken : null;
             }
 
             if (apiKey == null || apiKey.isEmpty()) {
