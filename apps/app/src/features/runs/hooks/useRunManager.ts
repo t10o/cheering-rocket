@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Capacitor, type PluginListenerHandle } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import {
   addDoc,
@@ -43,6 +44,13 @@ export const useRunManager = () => {
   const { user } = useAuth();
   const db = getFirestore(firebaseApp);
   const locationTracking = useBackgroundGeolocation();
+  const isNativePlatform = Capacitor.isNativePlatform();
+
+  const activeRunIdRef = useRef<string | null>(null);
+  const currentRunIdRef = useRef<string | null>(null);
+  const nativeRestartPromiseRef = useRef<Promise<void> | null>(null);
+  const lastNativeRestartAtRef = useRef(0);
+  const runnerStatusListenerRef = useRef<PluginListenerHandle | null>(null);
 
   const [activeRun, setActiveRun] = useState<ActiveRun | null>(null);
   const [loading, setLoading] = useState(false);
@@ -107,13 +115,36 @@ export const useRunManager = () => {
     await Preferences.remove({ key: LAST_LNG_PREF_KEY });
   }, []);
 
+  const ensureNativeTracking = useCallback(() => {
+    if (!isNativePlatform) return;
+    const runId = activeRunIdRef.current;
+    if (!runId) return;
+
+    const now = Date.now();
+    if (nativeRestartPromiseRef.current) return;
+    if (now - lastNativeRestartAtRef.current < 30_000) return;
+
+    nativeRestartPromiseRef.current = (async () => {
+      try {
+        const started = await startNativeBackgroundTracking(runId);
+        if (!started) {
+          console.warn("Failed to restart native background tracking");
+        }
+      } catch (restartError) {
+        captureException(restartError, "Native background tracking auto-restart error");
+      } finally {
+        lastNativeRestartAtRef.current = Date.now();
+        nativeRestartPromiseRef.current = null;
+      }
+    })();
+  }, [isNativePlatform, startNativeBackgroundTracking]);
+
   // アクティブなランを取得
   useEffect(() => {
     if (!user) return;
 
     let unsubscribeRun: (() => void) | undefined;
     let pollingTimer: ReturnType<typeof setInterval> | undefined;
-    let currentRunId: string | null = null;
     let latestRun: Run | null = null;
     let latestLocations: LocationPoint[] = [];
     let latestMessages: CheerMessage[] = [];
@@ -136,7 +167,8 @@ export const useRunManager = () => {
 
     const cleanupChildSubscriptions = () => {
       stopPolling();
-      currentRunId = null;
+      currentRunIdRef.current = null;
+      activeRunIdRef.current = null;
       latestLocations = [];
       latestMessages = [];
     };
@@ -234,12 +266,13 @@ export const useRunManager = () => {
           latestRun = run;
           updateActiveRun();
 
-          if (currentRunId === run.id) {
+          if (currentRunIdRef.current === run.id) {
             return;
           }
 
           cleanupChildSubscriptions();
-          currentRunId = run.id;
+          currentRunIdRef.current = run.id;
+          activeRunIdRef.current = run.id;
           startPolling(run);
         });
       } catch (error) {
@@ -256,6 +289,55 @@ export const useRunManager = () => {
       stopPolling();
     };
   }, [db, user]);
+
+  useEffect(() => {
+    if (!isNativePlatform) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const initializeStatusListener = async () => {
+      try {
+        const status = await RunnerLocation.getStatus();
+        if (!cancelled && !status.isTracking && status.hasBackgroundPermission) {
+          ensureNativeTracking();
+        }
+      } catch (statusError) {
+        captureException(statusError, "RunnerLocation status check error");
+      }
+
+      try {
+        const listener = await RunnerLocation.addListener("status", (status) => {
+          if (!status.isTracking && status.hasBackgroundPermission) {
+            ensureNativeTracking();
+          }
+        });
+
+        if (cancelled) {
+          await listener.remove();
+        } else {
+          runnerStatusListenerRef.current = listener;
+        }
+      } catch (listenerError) {
+        captureException(listenerError, "RunnerLocation status listener error");
+      }
+    };
+
+    void initializeStatusListener();
+
+    return () => {
+      cancelled = true;
+      if (runnerStatusListenerRef.current) {
+        void runnerStatusListenerRef.current.remove();
+        runnerStatusListenerRef.current = null;
+      }
+    };
+  }, [ensureNativeTracking, isNativePlatform]);
+
+  useEffect(() => {
+    activeRunIdRef.current = activeRun ? activeRun.run.id : null;
+  }, [activeRun]);
 
   // ランを開始
   const startRun = useCallback(
