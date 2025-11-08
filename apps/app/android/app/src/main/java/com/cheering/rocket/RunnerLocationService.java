@@ -50,8 +50,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.cheering.rocket.BuildConfig;
 public class RunnerLocationService extends Service {
     public static final String EXTRA_RUN_ID = "runId";
     public static final String EXTRA_NOTIFICATION_TITLE = "notificationTitle";
@@ -89,8 +87,7 @@ public class RunnerLocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        boolean debuggableFlag = (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        debug = BuildConfig.RUNNER_LOCATION_VERBOSE_LOGS || debuggableFlag;
+        debug = (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         credentialStore = new CredentialStore(this, debug);
         executor = Executors.newSingleThreadScheduledExecutor();
