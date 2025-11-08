@@ -171,20 +171,6 @@ export const useCheerSession = (
     [load],
   );
 
-  const runnerOptions = useMemo(
-    () =>
-      session?.runners.map((runner) => {
-        const base = {
-          label: runner.profile.displayName || "ランナー",
-          value: runner.profile.runId,
-        };
-        return runner.profile.photoUrl
-          ? { ...base, photoUrl: runner.profile.photoUrl }
-          : base;
-      }) ?? [],
-    [session?.runners],
-  );
-
   const allRunnersFinished = useMemo(() => {
     const currentRunners = session?.runners ?? [];
     if (currentRunners.length === 0) return false;
@@ -201,7 +187,6 @@ export const useCheerSession = (
     isPolling,
     reload: () => load("manual"),
     postMessage,
-    runnerOptions,
     allRunnersFinished,
   };
 };

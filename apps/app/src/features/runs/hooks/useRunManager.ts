@@ -141,7 +141,8 @@ export const useRunManager = () => {
       latestMessages = [];
     };
 
-    const fetchChildData = async (runId: string) => {
+    const fetchChildData = async (run: Run) => {
+      const runId = run.id;
       try {
         const locationsQuery = query(
           collection(db, "locationPoints"),
@@ -149,7 +150,7 @@ export const useRunManager = () => {
         );
         const messagesQuery = query(
           collection(db, "cheerMessages"),
-          where("runId", "==", runId),
+          where("eventId", "==", run.eventId),
         );
 
         const [locationsSnap, messagesSnap] = await Promise.all([
@@ -181,6 +182,9 @@ export const useRunManager = () => {
               ...data,
             } as CheerMessage;
           })
+          .filter((message) =>
+            message.runId ? message.runId === runId : true,
+          )
           .sort((a, b) => {
             const aTime =
               a.timestamp instanceof Timestamp ? a.timestamp.toMillis() : 0;
@@ -196,11 +200,11 @@ export const useRunManager = () => {
       }
     };
 
-    const startPolling = (runId: string) => {
+    const startPolling = (run: Run) => {
       stopPolling();
-      fetchChildData(runId);
+      fetchChildData(run);
       pollingTimer = setInterval(() => {
-        fetchChildData(runId);
+        fetchChildData(run);
       }, POLLING_INTERVAL_MS);
     };
 
@@ -236,7 +240,7 @@ export const useRunManager = () => {
 
           cleanupChildSubscriptions();
           currentRunId = run.id;
-          startPolling(run.id);
+          startPolling(run);
         });
       } catch (error) {
         console.error("アクティブランの取得エラー:", error);

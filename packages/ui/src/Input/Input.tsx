@@ -32,25 +32,37 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const domRef = useObjectRef(ref);
 
-  // アクセシビリティのためのaria-labelを設定
-  // 既存のaria-labelがある場合はそれを使用、なければlabelまたはplaceholderを使用
-  const ariaLabel =
-    textFieldProps["aria-label"] ||
-    label ||
-    textFieldProps.placeholder ||
-    "入力フィールド";
-
-  const textFieldOptions = {
+  const textFieldOptions: AriaTextFieldProps = {
     ...textFieldProps,
-    "aria-label": ariaLabel,
+    label,
   };
+
+  if (!label && !textFieldOptions["aria-label"]) {
+    textFieldOptions["aria-label"] =
+      textFieldProps.placeholder || "入力フィールド";
+  }
 
   const { labelProps, inputProps, descriptionProps, errorMessageProps } =
     useTextField(textFieldOptions, domRef);
 
+  const cleanedInputProps = { ...inputProps };
+  if (cleanedInputProps["aria-describedby"]) {
+    const describedBy = new Set(
+      cleanedInputProps["aria-describedby"].split(/\s+/).filter(Boolean),
+    );
+    if (!helperText && descriptionProps?.id) {
+      describedBy.delete(descriptionProps.id);
+    }
+    if (!errorMessage && errorMessageProps?.id) {
+      describedBy.delete(errorMessageProps.id);
+    }
+    cleanedInputProps["aria-describedby"] =
+      describedBy.size > 0 ? Array.from(describedBy).join(" ") : undefined;
+  }
+
   // input要素はchildrenを持たないので、childrenを除外
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { children, ...inputPropsWithoutChildren } = inputProps;
+  const { children, ...inputPropsWithoutChildren } = cleanedInputProps;
 
   const hasError = variant === "error" || !!errorMessage;
 
@@ -110,13 +122,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     <div className={clsx("space-y-1", className)}>
       {label && (
         <label
-          htmlFor={"htmlFor" in labelProps ? labelProps.htmlFor : undefined}
-          id={"id" in labelProps ? labelProps.id : undefined}
+          {...labelProps}
           className={clsx(
             "block",
             "text-sm",
             "font-medium",
             hasError ? "text-red-700" : "text-gray-700",
+            labelProps?.className,
           )}
         >
           {label}
@@ -155,16 +167,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       </div>
       {helperText && !hasError && (
         <p
-          id={"id" in descriptionProps ? descriptionProps.id : undefined}
-          className="text-sm text-gray-500"
+          {...descriptionProps}
+          className={clsx("text-sm", "text-gray-500", descriptionProps?.className)}
         >
           {helperText}
         </p>
       )}
       {errorMessage && (
         <p
-          id={"id" in errorMessageProps ? errorMessageProps.id : undefined}
-          className="text-sm text-red-600"
+          {...errorMessageProps}
+          className={clsx("text-sm", "text-red-600", errorMessageProps?.className)}
         >
           {errorMessage}
         </p>

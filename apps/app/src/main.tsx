@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { enableForegroundPushNotifications } from "./libs/pushNotifications";
 import { captureException } from "./libs/sentry";
 import { AuthProvider } from "./providers/auth/AuthProvider";
 import { routeTree } from "./routeTree.gen";
@@ -45,6 +46,8 @@ Sentry.init({
   enabled: !import.meta.env.DEV,
   environment: import.meta.env.DEV ? "development" : "production",
 });
+
+enableForegroundPushNotifications();
 
 // グローバルエラーハンドラーを設定
 window.addEventListener("error", (event) => {

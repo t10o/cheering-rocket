@@ -27,7 +27,6 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
     loading,
     error,
     isPosting,
-    runnerOptions,
     postMessage,
     isPolling,
     reload,
@@ -83,7 +82,6 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
   const handleSubmit = async (payload: {
     senderName: string;
     message: string;
-    runId?: string;
   }) => {
     await postMessage(payload);
   };
@@ -188,7 +186,6 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
             <aside>
               <CheerChat
                 messages={sortedMessages}
-                runnerOptions={runnerOptions}
                 onSubmit={handleSubmit}
                 isPosting={isPosting}
               />

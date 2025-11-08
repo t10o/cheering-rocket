@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import type { FormEvent } from "react";
 
@@ -6,19 +6,11 @@ import { Button, Input } from "@cheering/ui";
 
 import type { CheerMessage } from "@/types/cheer";
 
-type RunnerOption = {
-  label: string;
-  value: string;
-  photoUrl?: string;
-};
-
 type CheerChatProps = {
   messages: CheerMessage[];
-  runnerOptions: RunnerOption[];
   onSubmit: (payload: {
     senderName: string;
     message: string;
-    runId?: string;
   }) => Promise<void>;
   isPosting: boolean;
 };
@@ -27,13 +19,11 @@ const NAME_STORAGE_KEY = "cheering-rocket.sender-name";
 
 export const CheerChat = ({
   messages,
-  runnerOptions,
   onSubmit,
   isPosting,
 }: CheerChatProps) => {
   const [senderName, setSenderName] = useState("");
   const [message, setMessage] = useState("");
-  const [selectedRunId, setSelectedRunId] = useState<string>("all");
   const messageListRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -55,11 +45,9 @@ export const CheerChat = ({
     event.preventDefault();
     if (!senderName.trim() || !message.trim()) return;
 
-    const targetRunId = selectedRunId === "all" ? undefined : selectedRunId;
     const payload = {
       senderName: senderName.trim(),
       message: message.trim(),
-      ...(targetRunId ? { runId: targetRunId } : {}),
     };
 
     window.localStorage.setItem(NAME_STORAGE_KEY, senderName.trim());
@@ -72,17 +60,12 @@ export const CheerChat = ({
     }
   };
 
-  const targetRunners = useMemo(
-    () => [{ label: "すべてのランナー", value: "all" }, ...runnerOptions],
-    [runnerOptions],
-  );
-
   return (
     <div className="flex h-full flex-col gap-4 rounded-3xl bg-white/80 p-6 shadow-xl">
       <header>
         <h2 className="text-xl font-semibold text-gray-900">応援メッセージ</h2>
         <p className="text-sm text-gray-500">
-          ニックネームを入力して、ランナーにエールを届けましょう。必要に応じて送り先を選べます。
+          ニックネームを入力して、ランナー全員にエールを届けましょう。
         </p>
       </header>
 
@@ -132,7 +115,7 @@ export const CheerChat = ({
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3">
           <Input
             label="ニックネーム"
             placeholder="例: ゴール前応援隊"
@@ -140,21 +123,6 @@ export const CheerChat = ({
             onChange={(value) => setSenderName(value)}
             aria-required="true"
           />
-
-          <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
-            送り先
-            <select
-              value={selectedRunId}
-              onChange={(event) => setSelectedRunId(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-marathon-500 focus:outline-none focus:ring-2 focus:ring-marathon-200"
-            >
-              {targetRunners.map((runner) => (
-                <option key={runner.value} value={runner.value}>
-                  {runner.label}
-                </option>
-              ))}
-            </select>
-          </label>
         </div>
 
         <div className="flex flex-col gap-3">

@@ -413,17 +413,23 @@ const buildRoadAlignedPath = async (
       };
 
       const response = await service.route(request);
-      const [route] = response.routes;
-      if (route) {
-        const overview = route.overview_path ?? [];
-        overview.forEach((latLng, index) => {
-          const literal = latLngLiteral(latLng.toJSON());
-          if (start !== 0 && index === 0) {
-            return;
-          }
-          results.push(literal);
+      const route = response.routes?.[0];
+      if (!route) {
+        chunk.forEach((point, index) => {
+          if (start !== 0 && index === 0) return;
+          results.push(latLngLiteral(point));
         });
+        continue;
       }
+
+      const overview = route.overview_path ?? [];
+      overview.forEach((latLng, index) => {
+        const literal = latLngLiteral(latLng.toJSON());
+        if (start !== 0 && index === 0) {
+          return;
+        }
+        results.push(literal);
+      });
     } catch (error) {
       console.error("Directions request failed", error);
       const fallback = chunk.map(latLngLiteral);

@@ -36,7 +36,8 @@ export type LocationPoint = {
 
 export type CheerMessage = {
   id: string;
-  runId: string;
+  eventId: string;
+  runId: string | null;
   senderId: string;
   senderName: string;
   message: string;
