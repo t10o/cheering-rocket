@@ -71,7 +71,7 @@ export const CheerChat = ({
 
       <div
         ref={messageListRef}
-        className="flex-1 overflow-y-auto rounded-2xl bg-gradient-to-br from-finish-50/60 via-white to-marathon-50/40 p-4"
+        className="flex-1 max-h-[45vh] overflow-y-auto rounded-2xl bg-gradient-to-br from-finish-50/60 via-white to-marathon-50/40 p-4"
         aria-live="polite"
       >
         {messages.length === 0 ? (

@@ -133,14 +133,14 @@ export const RunActivePresenter = ({
                 {activeRun.cheerMessages.map((message) => (
                   <div key={message.id} className="flex">
                     <div className="flex-1">
-                      <div className="bg-blue-100 rounded-lg p-3 inline-block max-w-xs">
-                        <p className="text-sm font-medium text-blue-900">
+                      <div className="bg-white rounded-lg p-3 inline-block max-w-xs shadow-sm">
+                        <p className="text-sm font-medium text-gray-900">
                           {message.senderName}
                         </p>
-                        <p className="text-sm text-blue-800 mt-1">
+                        <p className="text-sm text-gray-800 mt-1">
                           {message.message}
                         </p>
-                        <p className="text-xs text-blue-600 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           {message.timestamp
                             .toDate()
                             .toLocaleTimeString("ja-JP")}
