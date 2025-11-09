@@ -98,7 +98,8 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
               {session?.eventName || "応援イベント"}
             </h1>
             <p className="mt-2 text-sm text-gray-500">
-              イベントID: <span className="font-mono text-gray-700">{eventId}</span>
+              イベントID:{" "}
+              <span className="font-mono text-gray-700">{eventId}</span>
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -109,7 +110,8 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
               </div>
             ) : session ? (
               <p className="text-xs text-gray-500">
-                最終更新: {new Date(session.updatedAt).toLocaleTimeString("ja-JP", {
+                最終更新:{" "}
+                {new Date(session.updatedAt).toLocaleTimeString("ja-JP", {
                   hour: "2-digit",
                   minute: "2-digit",
                   second: "2-digit",
@@ -119,6 +121,14 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
             <Button variant="secondary" onClick={() => reload()}>
               再読み込み
             </Button>
+          </div>
+
+          <div>
+            <p>位置情報の取得が止まっちゃったっぽいです😭</p>
+            <p>すみません🙇</p>
+            <p>
+              応援メッセージは多分おそらくきっとちゃんと届くので、引き続き応援はお願いします！！
+            </p>
           </div>
         </div>
       </header>
@@ -167,7 +177,9 @@ export const CheerPage = ({ eventId }: CheerPageProps) => {
 
               <div className="rounded-3xl bg-white/80 p-6 shadow-lg">
                 <header className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">ランナーの状況</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    ランナーの状況
+                  </h2>
                   {selectedRunner && (
                     <p className="text-sm text-gray-500">
                       現在フォーカス中: {selectedRunner.profile.displayName}
